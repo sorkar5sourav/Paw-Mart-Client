@@ -10,7 +10,7 @@ import { useContext } from "react";
 const Navbar = () => {
   const { user, signoutUserFunc, setUser, loading } = useContext(AuthContext);
 
-  // console.log(user);
+  console.log(user);
   const handleSignout = () => {
     signoutUserFunc()
       .then(() => {
@@ -107,11 +107,11 @@ const Navbar = () => {
             </div>
           ) : (
             <button className="my-btn">
-              <Link className="hover:underline" to={"/auth/signup"}>
+              <Link className="hover:underline" to={"/register"}>
                 Register
               </Link>
               /
-              <Link className="hover:underline" to={"/auth/login"}>
+              <Link className="hover:underline" to={"/login"}>
                 Log In
               </Link>
             </button>

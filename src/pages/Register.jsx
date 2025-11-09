@@ -1,9 +1,7 @@
 import React, { useContext, useState } from "react";
-import { Link, Navigate, useNavigate, useLocation } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
-import { FaEye } from "react-icons/fa";
-import { IoEyeOff } from "react-icons/io5";
 
 const Register = () => {
   const [show, setShow] = useState(false);
@@ -138,12 +136,12 @@ const Register = () => {
                 placeholder="••••••••"
                 className="input font-semibold input-bordered w-full bg-white/20 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
-              <span
+              {/* <span
                 onClick={() => setShow(!show)}
                 className="absolute text-lg right-2 top-9 cursor-pointer z-50"
               >
                 {show ? <FaEye /> : <IoEyeOff />}
-              </span>
+              </span> */}
             </div>
             <div>
               <a className="link link-hover text-amber-500">

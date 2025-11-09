@@ -1,11 +1,11 @@
 import { useContext, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router";
 
-import { FaEye } from "react-icons/fa";
-import { IoEyeOff } from "react-icons/io5";
+
+import { IoEye, IoEyeOff } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
-import { Navigate } from "react-router";
+// import { Navigate } from "react-router";
 
 const LogIn = () => {
   const [show, setShow] = useState(false);
@@ -104,12 +104,12 @@ const LogIn = () => {
                   placeholder="••••••••"
                   className="input font-semibold input-bordered w-full bg-white/20 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <span
+                  <button
                   onClick={() => setShow(!show)}
-                  className="absolute right-2 top-9 text-lg cursor-pointer z-50"
+                  className="absolute right-2 top-9 text-lg cursor-pointer z-50 text-white bg-transparent border-none"
                 >
-                  {show ? <IoEyeOff /> : <FaEye />}
-                </span>
+                  {show ? <IoEye /> : <IoEyeOff />}
+                </button>
               </div>
 
               <div className="mt-3">
