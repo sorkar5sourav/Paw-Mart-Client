@@ -74,7 +74,7 @@ const Footer = () => {
         <nav>
           <h6 className="footer-title">My Account</h6>
           <a className="link link-hover">Privacy & Policy</a>
-          <NavLink to={"/auth/login"} className="link link-hover">
+          <NavLink to={"/login"} className="link link-hover">
             {user ? "Switch Account" : "Log In"}
           </NavLink>
         </nav>

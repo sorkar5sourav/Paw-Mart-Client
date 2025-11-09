@@ -10,7 +10,7 @@ import { useContext } from "react";
 const Navbar = () => {
   const { user, signoutUserFunc, setUser, loading } = useContext(AuthContext);
 
-  console.log(user);
+  // console.log(user);
   const handleSignout = () => {
     signoutUserFunc()
       .then(() => {
