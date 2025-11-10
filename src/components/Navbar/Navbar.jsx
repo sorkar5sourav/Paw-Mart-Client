@@ -51,6 +51,12 @@ const Navbar = () => {
                 <MyLink to={"/"}>Home</MyLink>
               </li>
               <li>
+                <MyLink to={"/pets-supply"}>Pets & Supply</MyLink>
+              </li>
+              <li>
+                <MyLink to={"/listing"}>Create Listing</MyLink>
+              </li>
+              <li>
                 <MyLink to={"/profile"}>Profile</MyLink>
               </li>
             </ul>
@@ -72,7 +78,12 @@ const Navbar = () => {
         </div>
         <div className="navbar-center menu menu-horizontal gap-10 hidden lg:flex">
           <MyLink to={"/"}>Home</MyLink>
-
+          <MyLink to={"/pets-supply"} className={"text-black"}>
+            Pets & Supply
+          </MyLink>
+          <MyLink to={"/listing"} className={"text-black"}>
+            Create Listing
+          </MyLink>
           <MyLink to={"/profile"} className={"text-black"}>
             Profile
           </MyLink>
