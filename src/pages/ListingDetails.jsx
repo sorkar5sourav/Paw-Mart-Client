@@ -18,11 +18,16 @@ const ListingDetails = () => {
   const fetchListingDetails = async () => {
     try {
       setLoading(true);
+      if (!id) {
+        throw new Error("No listing ID provided");
+      }
+      // console.log("Fetching listing with ID:", id);
       const data = await getListingById(id);
+      // console.log("Listing data received:", data);
       setListing(data);
     } catch (error) {
       console.error("Error fetching listing details:", error);
-      toast.error("Failed to load listing details. Please try again.");
+      toast.error(error.message || "Failed to load listing details. Please try again.");
       navigate("/pets-supply");
     } finally {
       setLoading(false);
@@ -84,12 +89,10 @@ const ListingDetails = () => {
         <div>
           <div className="sticky top-8">
             <img
-              src={listing.imageUrl || "https://via.placeholder.com/600x600?text=No+Image"}
+              src={listing.imageUrl}
               alt={listing.name}
               className="w-full h-auto rounded-lg shadow-lg"
-              onError={(e) => {
-                e.target.src = "https://via.placeholder.com/600x600?text=No+Image";
-              }}
+              
             />
           </div>
         </div>

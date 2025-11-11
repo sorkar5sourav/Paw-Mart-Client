@@ -4,6 +4,7 @@ import MyContainer from "../components/MyContainer";
 import { getAllListings } from "../api/listingApi";
 import { toast } from "react-hot-toast";
 import { RingLoader } from "react-spinners";
+import ListingCard from "../components/ListingPage/ListingCard";
 
 const PetsSupply = () => {
   const [listings, setListings] = useState([]);
@@ -60,12 +61,6 @@ const PetsSupply = () => {
     setFilteredListings(filtered);
   };
 
-  const formatPrice = (price) => {
-    if (price === 0 || price === "0") {
-      return "Free";
-    }
-    return `$${parseFloat(price).toFixed(2)}`;
-  };
 
   if (loading) {
     return (
@@ -102,6 +97,7 @@ const PetsSupply = () => {
 
         {/* Category Filter */}
         <div className="w-full md:w-auto">
+            <b>Category : </b>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -134,76 +130,7 @@ const PetsSupply = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredListings.map((listing) => (
-            <div
-              key={listing._id || listing.id}
-              className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
-            >
-              {/* Image */}
-              <figure className="h-48 overflow-hidden">
-                <img
-                  src={listing.imageUrl || "https://via.placeholder.com/400x300?text=No+Image"}
-                  alt={listing.name}
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                  onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/400x300?text=No+Image";
-                  }}
-                />
-              </figure>
-
-              {/* Card Body */}
-              <div className="card-body">
-                <div className="flex items-start justify-between mb-2">
-                  <h2 className="card-title text-lg line-clamp-2 flex-1">
-                    {listing.name}
-                  </h2>
-                  <span className="badge badge-primary badge-sm ml-2 shrink-0">
-                    {listing.category}
-                  </span>
-                </div>
-
-                {/* Location */}
-                <div className="flex items-center text-gray-600 text-sm mb-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 mr-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  <span className="truncate">{listing.location}</span>
-                </div>
-
-                {/* Price */}
-                <div className="mb-4">
-                  <span className="text-2xl font-bold text-[#357fa7]">
-                    {formatPrice(listing.price)}
-                  </span>
-                </div>
-
-                {/* See Details Button */}
-                <div className="card-actions justify-end">
-                  <Link
-                    to={`/listing-details/${listing._id || listing.id}`}
-                    className="btn btn-primary w-full"
-                  >
-                    See Details
-                  </Link>
-                </div>
-              </div>
-            </div>
+           <ListingCard key={listing._id} listing={listing} />
           ))}
         </div>
       )}

@@ -57,10 +57,16 @@ export const getAllListings = async () => {
  */
 export const getListingById = async (listingId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/listings/${listingId}`);
+    if (!listingId) {
+      throw new Error("Listing ID is required");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/listing/${listingId}`);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
