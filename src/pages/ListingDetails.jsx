@@ -1,15 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import MyContainer from "../components/MyContainer";
 import { getListingById } from "../api/listingApi";
 import { toast } from "react-hot-toast";
 import { RingLoader } from "react-spinners";
+import { AuthContext } from "../context/AuthContext";
+import OrderModal from "../components/ListingPage/OrderModal";
 
 const ListingDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isOrderSubmitting, setIsOrderSubmitting] = useState(false);
 
   useEffect(() => {
     fetchListingDetails();
@@ -18,11 +23,16 @@ const ListingDetails = () => {
   const fetchListingDetails = async () => {
     try {
       setLoading(true);
+      if (!id) {
+        throw new Error("No listing ID provided");
+      }
+      // console.log("Fetching listing with ID:", id);
       const data = await getListingById(id);
+      // console.log("Listing data received:", data);
       setListing(data);
     } catch (error) {
       console.error("Error fetching listing details:", error);
-      toast.error("Failed to load listing details. Please try again.");
+      toast.error(error.message || "Failed to load listing details. Please try again.");
       navigate("/pets-supply");
     } finally {
       setLoading(false);
@@ -33,7 +43,11 @@ const ListingDetails = () => {
     if (price === 0 || price === "0") {
       return "Free";
     }
-    return `$${parseFloat(price).toFixed(2)}`;
+    const parsed = parseFloat(price);
+    if (Number.isNaN(parsed)) {
+      return "BDT 0.00";
+    }
+    return `BDT ${parsed.toFixed(2)}`;
   };
 
   const formatDate = (dateString) => {
@@ -79,19 +93,17 @@ const ListingDetails = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Image Section */}
-        <div>
-          <div className="sticky top-8">
-            <img
-              src={listing.imageUrl || "https://via.placeholder.com/600x600?text=No+Image"}
-              alt={listing.name}
-              className="w-full h-auto rounded-lg shadow-lg"
-              onError={(e) => {
-                e.target.src = "https://via.placeholder.com/600x600?text=No+Image";
-              }}
-            />
-          </div>
+        <div className="bg-gray-100 h-full flex justify-center items-center">
+          <img
+            src={listing.imageUrl}
+            alt={listing.name}
+            className="rounded-lg max-h-[80vh] w-full object-contain shadow-lg"
+            onError={(e) => {
+              e.target.src = "https://i.pinimg.com/736x/44/b2/11/44b211e4d40b1b835da33b55fdf9fd13.jpg";
+            }}
+          />
         </div>
 
         {/* Details Section */}
@@ -223,20 +235,41 @@ const ListingDetails = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-wrap gap-4 pt-4">
+              <button
+                type="button"
+                className="btn btn-secondary flex-1 min-w-[160px]"
+                onClick={() => {
+                  if (!user) {
+                    toast.error("Please login to place an order.");
+                    navigate("/login");
+                    return;
+                  }
+                  setIsOrderModalOpen(true);
+                }}
+              >
+                Adopt / Order Now
+              </button>
               <a
                 href={`mailto:${listing.email}?subject=Inquiry about ${listing.name}`}
-                className="btn btn-primary flex-1"
+                className="btn btn-primary flex-1 min-w-[160px]"
               >
                 Contact Seller
               </a>
-              <Link to="/pets-supply" className="btn btn-outline">
+              <Link to="/pets-supply" className="btn btn-outline min-w-[160px]">
                 Browse More
               </Link>
             </div>
           </div>
         </div>
       </div>
+
+      <OrderModal
+        listing={listing}
+        user={user}
+        isOpen={isOrderModalOpen}
+        onClose={() => setIsOrderModalOpen(false)}
+      />
     </MyContainer>
   );
 };
