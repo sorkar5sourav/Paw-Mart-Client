@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 
 const ListingCard = ({listing}) => {
-    const {_id, name, imager, category, location, price} = listing;
+    const {_id, name, image, category, location, price} = listing;
     // console.log(listing);
     return (
         <div
@@ -10,11 +10,12 @@ const ListingCard = ({listing}) => {
         {/* Image */}
         <figure className="h-48 overflow-hidden">
           <img
-            src={imager || "https://www.ubuy.com.bd/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvODFwMWZzU3ZiaUwuX0FDX1NMMTUwMF8uanBn.jpg"}
+            src={image}
+
             alt={name}
             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
             onError={(e) => {
-              e.target.src = "https://via.placeholder.com/400x300?text=No+Image";
+              e.target.src =  "https://www.ubuy.com.bd/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvODFwMWZzU3ZiaUwuX0FDX1NMMTUwMF8uanBn.jpg";
             }}
           />
         </figure>
