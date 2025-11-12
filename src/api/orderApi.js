@@ -22,3 +22,24 @@ export const createOrder = async (orderData) => {
     throw error;
   }
 };
+
+export const getOrdersByUser = async (email) => {
+  try {
+    if (!email) {
+      throw new Error("User email is required");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/orders?email=${encodeURIComponent(email)}`);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    throw error;
+  }
+};
