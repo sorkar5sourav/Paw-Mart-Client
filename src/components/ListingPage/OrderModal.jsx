@@ -1,5 +1,4 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { toast } from "react-hot-toast";
 import { createOrder } from "../../api/orderApi";
 
@@ -213,13 +212,6 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
       </form>
     </div>
   );
-};
-
-OrderModal.propTypes = {
-  listing: PropTypes.object,
-  user: PropTypes.object,
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
 };
 
 export default OrderModal;

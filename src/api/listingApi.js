@@ -77,3 +77,100 @@ export const getListingById = async (listingId) => {
   }
 };
 
+/**
+ * Get listings created by a specific user
+ * @param {string} userId
+ * @returns {Promise<Array>}
+ */
+export const getListingsByUser = async (userId) => {
+  try {
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/user-listings?userId=${encodeURIComponent(userId)}`);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching user listings:", error);
+    throw error;
+  }
+};
+
+/**
+ * Update a listing
+ * @param {string} listingId
+ * @param {Object} listingData
+ * @returns {Promise<Object>}
+ */
+export const updateListing = async (listingId, listingData) => {
+  try {
+    if (!listingId) {
+      throw new Error("Listing ID is required");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/listings/${listingId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(listingData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error updating listing:", error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a listing
+ * @param {string} listingId
+ * @param {string} userId
+ * @returns {Promise<Object>}
+ */
+export const deleteListing = async (listingId, userId) => {
+  try {
+    if (!listingId) {
+      throw new Error("Listing ID is required");
+    }
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/listings/${listingId}?userId=${encodeURIComponent(userId)}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error deleting listing:", error);
+    throw error;
+  }
+};
+
