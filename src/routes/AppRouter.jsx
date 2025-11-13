@@ -8,6 +8,7 @@ import PetsSupply from "../pages/Pets&Supply";
 import ListingDetails from "../pages/ListingDetails";
 import MyListings from "../pages/MyListings";
 import MyOrders from "../pages/MyOrders";
+import ErrorPage from "../pages/ErrorPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
         element: <ListingDetails />,
       },
     ],
+  },
+  {
+    path: "/*",
+    element: <ErrorPage />,
   },
 ]);
 

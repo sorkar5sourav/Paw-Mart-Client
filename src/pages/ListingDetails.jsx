@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import MyContainer from "../components/MyContainer";
 import { getListingById } from "../api/listingApi";
@@ -14,13 +14,9 @@ const ListingDetails = () => {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [isOrderSubmitting, setIsOrderSubmitting] = useState(false);
+  // const [isOrderSubmitting, setIsOrderSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchListingDetails();
-  }, [id]);
-
-  const fetchListingDetails = async () => {
+  const fetchListingDetails = useCallback(async () => {
     try {
       setLoading(true);
       if (!id) {
@@ -32,12 +28,18 @@ const ListingDetails = () => {
       setListing(data);
     } catch (error) {
       console.error("Error fetching listing details:", error);
-      toast.error(error.message || "Failed to load listing details. Please try again.");
+      toast.error(
+        error.message || "Failed to load listing details. Please try again."
+      );
       navigate("/pets-supply");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchListingDetails();
+  }, [fetchListingDetails]);
 
   const formatPrice = (price) => {
     if (price === 0 || price === "0") {
@@ -85,10 +87,7 @@ const ListingDetails = () => {
   return (
     <MyContainer className="flex-1 py-8 px-4 min-h-screen">
       <div className="mb-6">
-        <Link
-          to="/pets-supply"
-          className="btn btn-ghost btn-sm mb-4"
-        >
+        <Link to="/pets-supply" className="btn btn-ghost btn-sm mb-4">
           ← Back to Listings
         </Link>
       </div>
@@ -99,9 +98,10 @@ const ListingDetails = () => {
           <img
             src={listing.imageUrl}
             alt={listing.name}
-            className="rounded-lg max-h-[80vh] w-full object-contain shadow-lg"
+            className="rounded-lg max-h-140 w-auto"
             onError={(e) => {
-              e.target.src = "https://i.pinimg.com/736x/44/b2/11/44b211e4d40b1b835da33b55fdf9fd13.jpg";
+              e.target.src =
+                "https://i.pinimg.com/736x/44/b2/11/44b211e4d40b1b835da33b55fdf9fd13.jpg";
             }}
           />
         </div>
@@ -238,7 +238,7 @@ const ListingDetails = () => {
             <div className="flex flex-wrap gap-4 pt-4">
               <button
                 type="button"
-                className="btn btn-secondary flex-1 min-w-[160px]"
+                className="btn btn-secondary flex-1 min-w-40"
                 onClick={() => {
                   if (!user) {
                     toast.error("Please login to place an order.");
@@ -250,13 +250,7 @@ const ListingDetails = () => {
               >
                 Adopt / Order Now
               </button>
-              <a
-                href={`mailto:${listing.email}?subject=Inquiry about ${listing.name}`}
-                className="btn btn-primary flex-1 min-w-[160px]"
-              >
-                Contact Seller
-              </a>
-              <Link to="/pets-supply" className="btn btn-outline min-w-[160px]">
+              <Link to="/pets-supply" className="btn btn-outline min-w-40">
                 Browse More
               </Link>
             </div>
@@ -275,4 +269,3 @@ const ListingDetails = () => {
 };
 
 export default ListingDetails;
-

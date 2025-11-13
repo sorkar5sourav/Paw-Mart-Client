@@ -1,8 +1,7 @@
 import { useContext, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-
-
-import { IoEye, IoEyeOff } from "react-icons/io5";
+import { FaEye } from "react-icons/fa";
+import { IoEyeOff } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 // import { Navigate } from "react-router";
@@ -104,24 +103,24 @@ const LogIn = () => {
                   placeholder="••••••••"
                   className="input font-semibold input-bordered w-full bg-white/20 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                  <button
+                <button
                   onClick={() => setShow(!show)}
                   className="absolute right-2 top-9 text-lg cursor-pointer z-50 text-white bg-transparent border-none"
                 >
-                  {show ? <IoEye /> : <IoEyeOff />}
+                  {show ? <FaEye /> : <IoEyeOff />}
                 </button>
               </div>
 
               <div className="mt-3">
                 <Link
                   state={{ email: email }}
-                  to={"/auth/forgot-password"}
+                  to={"/forgot-password"}
                   className="link  link-hover text-amber-500"
                 >
                   Forgot Password?
                 </Link>
                 <Link
-                  to={"/auth/signup"}
+                  to={"/signup"}
                   className="link link-hover text-green-500 float-right"
                 >
                   New? 👉Sign Up
