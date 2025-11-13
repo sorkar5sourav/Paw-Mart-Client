@@ -1,60 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router";
-import { RingLoader } from "react-spinners";
-import { toast } from "react-hot-toast";
-import { getAllListings } from "../../api/listingApi";
 
-const RecentListings = () => {
-  const [listings, setListings] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const recentListings = useMemo(() => listings.slice(0, 6), [listings]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchListings = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllListings();
-        if (!isMounted) return;
-
-        const sorted = [...data].sort((a, b) => {
-          const dateA = new Date(a.createdAt || a.updatedAt || 0).getTime();
-          const dateB = new Date(b.createdAt || b.updatedAt || 0).getTime();
-          return dateB - dateA;
-        });
-
-        setListings(sorted);
-      } catch (error) {
-        if (isMounted) {
-          console.error("Failed to load recent listings:", error);
-          toast.error("Failed to load recent listings. Please try again.");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchListings();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  if (loading) {
-    return (
-      <section className="w-full rounded-2xl bg-white/60 py-12 shadow-sm">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <RingLoader color="#357fa7" size={60} />
-          <p className="text-slate-600">Loading recent listings...</p>
-        </div>
-      </section>
-    );
-  }
+const RecentListings = ({ listings = [] }) => {
+  const recentListings = useMemo(() => {
+    const sorted = [...listings].sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.updatedAt || 0).getTime();
+      const dateB = new Date(b.createdAt || b.updatedAt || 0).getTime();
+      return dateB - dateA;
+    });
+    return sorted.slice(0, 6);
+  }, [listings]);
 
   if (recentListings.length === 0) {
     return (

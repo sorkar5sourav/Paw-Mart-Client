@@ -10,6 +10,10 @@ import CategoryFilteredProduct from "../pages/CategoryFilteredProduct";
 import MyListings from "../pages/MyListings";
 import MyOrders from "../pages/MyOrders";
 import ErrorPage from "../pages/ErrorPage";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://paw-mart-server-side.vercel.app";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -18,6 +22,13 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Homepage />,
+        loader: () =>
+          fetch(`${API_BASE_URL}/listings`)
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              return data;
+            }),
       },
       {
         path: "/login",
@@ -34,6 +45,13 @@ const router = createBrowserRouter([
       {
         path: "/pets-supply",
         element: <PetsSupply />,
+        loader: () =>
+          fetch(`${API_BASE_URL}/listings`)
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              return data;
+            }),
       },
       {
         path: "/my-listings",
@@ -50,6 +68,13 @@ const router = createBrowserRouter([
       {
         path: "/category-filtered-product/:categoryName",
         element: <CategoryFilteredProduct />,
+        loader: () =>
+          fetch(`${API_BASE_URL}/listings`)
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              return data;
+            }),
       },
     ],
   },

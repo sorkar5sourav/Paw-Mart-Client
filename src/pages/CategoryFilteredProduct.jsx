@@ -1,9 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router";
-import { RingLoader } from "react-spinners";
+import { useMemo } from "react";
+import { Link, useParams, useLoaderData } from "react-router";
 import MyContainer from "../components/MyContainer";
-import { getAllListings } from "../api/listingApi";
-import { toast } from "react-hot-toast";
 import ListingCard from "../components/ListingPage/ListingCard";
 
 const CATEGORY_LABELS = {
@@ -24,10 +21,10 @@ const normalizeCategory = (category) => {
 
 const CategoryFilteredProduct = () => {
   const { categoryName = "" } = useParams();
+  const allListingsData = useLoaderData();
+  const allListings = useMemo(() => allListingsData || [], [allListingsData]);
   const decodedCategory = decodeURIComponent(categoryName);
   const normalizedCategory = normalizeCategory(decodedCategory);
-  const [listings, setListings] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const sectionTitle = useMemo(
     () =>
@@ -38,51 +35,15 @@ const CategoryFilteredProduct = () => {
     [decodedCategory, normalizedCategory]
   );
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchListings = async () => {
-      try {
-        setLoading(true);
-        const allListings = await getAllListings();
-        if (!isMounted) return;
-
-        const target = normalizeCategory(decodedCategory).toLowerCase();
-        const filtered = allListings.filter((listing) => {
-          const listingCategory = normalizeCategory(
-            listing.category
-          )?.toLowerCase();
-          return listingCategory === target;
-        });
-
-        setListings(filtered);
-      } catch (error) {
-        if (isMounted) {
-          console.error("Error loading category listings:", error);
-          toast.error("Unable to load category listings right now.");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchListings();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [decodedCategory]);
-
-  if (loading) {
-    return (
-      <MyContainer className="flex min-h-screen flex-1 flex-col items-center justify-center gap-4">
-        <RingLoader color="#357fa7" size={60} />
-        <p className="text-gray-600">Loading {sectionTitle} listings...</p>
-      </MyContainer>
-    );
-  }
+  const listings = useMemo(() => {
+    const target = normalizeCategory(decodedCategory).toLowerCase();
+    return allListings.filter((listing) => {
+      const listingCategory = normalizeCategory(
+        listing.category
+      )?.toLowerCase();
+      return listingCategory === target;
+    });
+  }, [allListings, decodedCategory]);
 
   return (
     <MyContainer className="flex flex-1 flex-col gap-8 py-10 px-4">

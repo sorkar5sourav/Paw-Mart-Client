@@ -1,43 +1,18 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLoaderData } from "react-router";
 import MyContainer from "../components/MyContainer";
-import { getAllListings } from "../api/listingApi";
-import { toast } from "react-hot-toast";
-import { RingLoader } from "react-spinners";
 import ListingCard from "../components/ListingPage/ListingCard";
 
 const PetsSupply = () => {
-  const [listings, setListings] = useState([]);
+  const listingsData = useLoaderData();
+  const listings = useMemo(() => listingsData || [], [listingsData]);
   const [filteredListings, setFilteredListings] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   const categories = ["All", "Pets", "Food", "Accessories", "Toys"];
 
   useEffect(() => {
-    fetchListings();
-  }, []);
-
-  useEffect(() => {
-    filterListings();
-  }, [listings, selectedCategory, searchQuery]);
-
-  const fetchListings = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllListings();
-      setListings(data);
-      setFilteredListings(data);
-    } catch (error) {
-      console.error("Error fetching listings:", error);
-      toast.error("Failed to load listings. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterListings = () => {
     let filtered = [...listings];
 
     // Filter by category
@@ -59,17 +34,7 @@ const PetsSupply = () => {
     }
 
     setFilteredListings(filtered);
-  };
-
-
-  if (loading) {
-    return (
-      <MyContainer className="flex-1 flex-col justify-center items-center flex min-h-screen">
-        <RingLoader color="#357fa7" size={60} />
-        <p className="mt-4 text-gray-600">Loading listings...</p>
-      </MyContainer>
-    );
-  }
+  }, [listings, selectedCategory, searchQuery]);
 
   return (
     <MyContainer className="flex-1 py-8 px-4 min-h-screen">
@@ -97,7 +62,7 @@ const PetsSupply = () => {
 
         {/* Category Filter */}
         <div className="w-full md:w-auto">
-            <b>Category : </b>
+          <b>Category : </b>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -130,7 +95,7 @@ const PetsSupply = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredListings.map((listing) => (
-           <ListingCard key={listing._id} listing={listing} />
+            <ListingCard key={listing._id} listing={listing} />
           ))}
         </div>
       )}
@@ -139,4 +104,3 @@ const PetsSupply = () => {
 };
 
 export default PetsSupply;
-
