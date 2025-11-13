@@ -11,8 +11,8 @@ const Footer = () => {
         <div className="">
           <div className="flex flex-col md:flex-row md:items-center">
             <img
-              className="h-15 lg:h-25 w-15 lg:w-25 mb-4 md:mb-0 md:mr-4"
-              src="https://i.ibb.co.com/G3fQnnZC/Gemini-Generated-Image.png"
+              className="h-15 lg:h-25 w-15 lg:w-25 rounded-full mb-4 md:mb-0 md:mr-4"
+              src="https://i.ibb.co.com/KjQ1LCtV/Gemini-Generated-Image-qf5rsjqf5rsjqf5r.png"
               alt=""
             />
             <div className="">

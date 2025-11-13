@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import { motion } from "framer-motion";
 
 const categories = [
   {
@@ -32,6 +33,33 @@ const categories = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+      when: "beforeChildren",
+      staggerChildren: 0.12,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const MotionSection = motion.section;
+const MotionArticle = motion.article;
+
 const CategoryCard = () => {
   const navigate = useNavigate();
 
@@ -41,7 +69,13 @@ const CategoryCard = () => {
   };
 
   return (
-    <section className="w-full py-12">
+    <MotionSection
+      className="w-full py-12"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+    >
       <div className="text-center">
         <p className="text-sm font-semibold uppercase tracking-widest text-emerald-500">
           Explore Categories
@@ -57,7 +91,7 @@ const CategoryCard = () => {
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {categories.map(({ title, description, icon, accent, value }) => (
-          <article
+          <MotionArticle
             key={title}
             role="button"
             tabIndex={0}
@@ -69,6 +103,7 @@ const CategoryCard = () => {
               }
             }}
             className="group relative cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
+            variants={cardVariants}
           >
             <div
               className={`absolute -right-10 -top-10 h-32 w-32 rounded-full ${accent} blur-3xl opacity-60 transition duration-300 group-hover:opacity-100`}
@@ -95,10 +130,10 @@ const CategoryCard = () => {
                 <span aria-hidden="true">→</span>
               </button>
             </div>
-          </article>
+          </MotionArticle>
         ))}
       </div>
-    </section>
+    </MotionSection>
   );
 };
 

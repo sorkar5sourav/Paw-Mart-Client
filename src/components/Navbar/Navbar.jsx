@@ -70,12 +70,12 @@ const Navbar = () => {
             </ul>
           </div>
           <NavLink to="/">
-            <div className="flex items-center text-xl font-bold text-blue-600">
+            <div className="flex items-center text-xl font-bold text-emerald-600">
               <img
-                src="https://i.ibb.co/39pZGd84/Gemini-Generated-Image-xhlddwxhlddwxhld.png"
-                className="h-10 mr-2 w-10"
+                src="https://i.ibb.co.com/KjQ1LCtV/Gemini-Generated-Image-qf5rsjqf5rsjqf5r.png"
+                className="h-10 mr-2 w-10 rounded-full"
               />
-              PET CARE
+              PAW MART
             </div>
           </NavLink>
         </div>
