@@ -1,20 +1,22 @@
 import { Link } from "react-router";
 
 const ListingCard = ({ listing }) => {
-  const { _id, name, imageUrl, image, category, location, price } = listing;
-  const displayImage = imageUrl || image || "https://via.placeholder.com/400x300?text=No+Image";
-  const displayPrice = category === "Pets" ? "Free" : `BDT ${Number(price || 0).toFixed(2)}`;
+  const { _id, name, imageUrl, category, location, price } = listing;
+  // console.log(listing);
+  const displayPrice =
+    category === "Pets" ? "Free" : `BDT ${Number(price || 0).toFixed(2)}`;
 
   return (
     <div className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow duration-300">
       {/* Image */}
       <figure className="h-48 overflow-hidden">
         <img
-          src={displayImage}
+          src={imageUrl}
           alt={name}
           className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
           onError={(e) => {
-            e.target.src = "https://via.placeholder.com/400x300?text=No+Image";
+            e.target.src =
+              "https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg";
           }}
         />
       </figure>
@@ -23,7 +25,9 @@ const ListingCard = ({ listing }) => {
       <div className="card-body">
         <div className="flex items-start justify-between mb-2">
           <h2 className="card-title text-lg line-clamp-2 flex-1">{name}</h2>
-          <span className="badge badge-primary badge-sm ml-2 shrink-0">{category}</span>
+          <span className="badge badge-primary badge-sm ml-2 shrink-0">
+            {category}
+          </span>
         </div>
 
         {/* Location */}
@@ -58,7 +62,10 @@ const ListingCard = ({ listing }) => {
 
         {/* See Details Button */}
         <div className="card-actions justify-end">
-          <Link to={`/listing-details/${_id}`} className="btn btn-primary w-full">
+          <Link
+            to={`/listing-details/${_id}`}
+            className="btn btn-primary w-full"
+          >
             See Details
           </Link>
         </div>

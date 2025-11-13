@@ -85,7 +85,7 @@ const ListingDetails = () => {
   }
 
   return (
-    <MyContainer className="flex-1 py-8 px-4 min-h-screen">
+    <MyContainer className="flex-1 py-8 px-4">
       <div className="mb-6">
         <Link to="/pets-supply" className="btn btn-ghost btn-sm mb-4">
           ← Back to Listings

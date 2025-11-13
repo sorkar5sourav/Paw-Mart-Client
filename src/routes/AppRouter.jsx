@@ -6,6 +6,7 @@ import Register from "../pages/Register";
 import ListingForm from "../pages/ListingForm";
 import PetsSupply from "../pages/Pets&Supply";
 import ListingDetails from "../pages/ListingDetails";
+import CategoryFilteredProduct from "../pages/CategoryFilteredProduct";
 import MyListings from "../pages/MyListings";
 import MyOrders from "../pages/MyOrders";
 import ErrorPage from "../pages/ErrorPage";
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/listing-details/:id",
         element: <ListingDetails />,
+      },
+      {
+        path: "/category-filtered-product/:categoryName",
+        element: <CategoryFilteredProduct />,
       },
     ],
   },
