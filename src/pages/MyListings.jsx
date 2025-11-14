@@ -4,12 +4,8 @@ import { toast } from "react-hot-toast";
 import { RingLoader } from "react-spinners";
 import MyContainer from "../components/MyContainer";
 import { AuthContext } from "../context/AuthContext";
-import {
-  deleteListing,
-  getListingsByUser,
-  updateListing,
-} from "../api/listingApi";
 import EditListingModal from "../components/ListingPage/EditListingModal";
+import API_BASE_URL from "../config/apiBaseUrl";
 
 const MyListings = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -30,7 +26,18 @@ const MyListings = () => {
     }
     try {
       setLoading(true);
-      const data = await getListingsByUser(userId);
+      const response = await fetch(
+        `${API_BASE_URL}/user-listings?userId=${encodeURIComponent(userId)}`
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            `Failed to load listings (status ${response.status})`
+        );
+      }
+      const data = await response.json();
+      console.log(data);
       setListings(Array.isArray(data) ? data : data?.listings || []);
     } catch (error) {
       console.error("Error loading user listings:", error);
@@ -71,7 +78,21 @@ const MyListings = () => {
 
     try {
       setIsFetching(true);
-      await deleteListing(listing._id, userId);
+      const response = await fetch(
+        `${API_BASE_URL}/listings/${listing._id}?userId=${encodeURIComponent(
+          userId
+        )}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            `Failed to delete listing (status ${response.status})`
+        );
+      }
       setListings((prev) => prev.filter((item) => item._id !== listing._id));
       toast.success("Listing deleted successfully");
     } catch (error) {
@@ -87,14 +108,35 @@ const MyListings = () => {
 
     try {
       setIsFetching(true);
-      const response = await updateListing(selectedListing._id, {
-        ...updatedData,
-        userId,
-      });
-      const updatedListing = response?.listing || response;
+      const response = await fetch(
+        `${API_BASE_URL}/listings/${selectedListing._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...updatedData,
+            userId,
+          }),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            `Failed to update listing (status ${response.status})`
+        );
+      }
+      const updatedListingResponse = await response.json();
+      console.log(updatedListingResponse);
+      const updatedListing =
+        updatedListingResponse?.listing || updatedListingResponse;
       setListings((prev) =>
         prev.map((listing) =>
-          listing._id === updatedListing._id ? { ...listing, ...updatedListing } : listing
+          listing._id === updatedListing._id
+            ? { ...listing, ...updatedListing }
+            : listing
         )
       );
       toast.success("Listing updated successfully");
@@ -134,21 +176,30 @@ const MyListings = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-800">My Listings</h1>
           <p className="text-gray-600">
-            Manage your pets and products. Only you can see and edit these listings.
+            Manage your pets and products. Only you can see and edit these
+            listings.
           </p>
         </div>
         <div className="text-sm text-gray-500">
-          Total Listings: <span className="font-semibold text-gray-700">{listings.length}</span>
+          Total Listings:{" "}
+          <span className="font-semibold text-gray-700">{listings.length}</span>
         </div>
       </div>
 
       {listings.length === 0 ? (
         <div className="bg-white shadow rounded-lg p-8 text-center">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">No listings yet</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+            No listings yet
+          </h2>
           <p className="text-gray-500 mb-4">
             Create a listing to see it appear here and manage it later.
           </p>
-          <button className="btn btn-primary" onClick={() => navigate("/listing")}>Create Listing</button>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/listing")}
+          >
+            Create Listing
+          </button>
         </div>
       ) : (
         <div className="overflow-x-auto bg-white shadow rounded-lg">
@@ -169,16 +220,30 @@ const MyListings = () => {
                 <tr key={listing._id} className="hover">
                   <td>
                     <div>
-                      <p className="font-semibold text-gray-800">{listing.name}</p>
-                      <p className="text-xs text-gray-500 truncate max-w-xs">{listing.description}</p>
+                      <p className="font-semibold text-gray-800">
+                        {listing.name}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate max-w-xs">
+                        {listing.description}
+                      </p>
                     </div>
                   </td>
                   <td>{listing.category}</td>
-                  <td>{listing.category === "Pets" ? "Free" : `BDT ${Number(listing.price || 0).toFixed(2)}`}</td>
-                  <td>{listing.location}</td>
-                  <td>{listing.pickupDate ? new Date(listing.pickupDate).toLocaleDateString() : "N/A"}</td>
                   <td>
-                    <span className="badge badge-outline badge-success">Active</span>
+                    {listing.category === "Pets"
+                      ? "Free"
+                      : `BDT ${Number(listing.Price || listing.price || 0).toFixed(2)}`}
+                  </td>
+                  <td>{listing.location}</td>
+                  <td>
+                    {listing.date || listing.pickupDate
+                      ? new Date(listing.date || listing.pickupDate).toLocaleDateString()
+                      : "N/A"}
+                  </td>
+                  <td>
+                    <span className="badge badge-outline badge-success">
+                      Active
+                    </span>
                   </td>
                   <td>
                     <div className="flex justify-end gap-2">

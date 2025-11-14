@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
 import MyContainer from "../components/MyContainer";
-import { createListing } from "../api/listingApi";
+import API_BASE_URL from "../config/apiBaseUrl";
 
 const ListingForm = () => {
   const { user } = useContext(AuthContext);
@@ -13,7 +13,7 @@ const ListingForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error("Please login to create a listing");
       navigate("/login");
@@ -25,7 +25,12 @@ const ListingForm = () => {
     const form = e.target;
     const name = form.name?.value;
     const selectedCategory = form.category?.value;
-    const price = selectedCategory === "Pets" ? 0 : parseFloat(form.price?.value) || 0;
+    const price =
+      selectedCategory === "Pets"
+        ? 0
+        : Number.isNaN(parseFloat(form.price?.value))
+        ? 0
+        : parseFloat(form.price?.value);
     const location = form.location?.value;
     const description = form.description?.value;
     const imageUrl = form.imageUrl?.value;
@@ -33,13 +38,23 @@ const ListingForm = () => {
     const email = user.email;
 
     // Validation
-    if (!name || !selectedCategory || !location || !description || !imageUrl || !pickupDate) {
+    if (
+      !name ||
+      !selectedCategory ||
+      !location ||
+      !description ||
+      !imageUrl ||
+      !pickupDate
+    ) {
       toast.error("Please fill in all required fields");
       setIsSubmitting(false);
       return;
     }
 
-    if (selectedCategory !== "Pets" && (!form.price?.value || parseFloat(form.price.value) < 0)) {
+    if (
+      selectedCategory !== "Pets" &&
+      (!form.price?.value || parseFloat(form.price.value) < 0)
+    ) {
       toast.error("Please enter a valid price");
       setIsSubmitting(false);
       return;
@@ -49,29 +64,48 @@ const ListingForm = () => {
       const listingData = {
         name,
         category: selectedCategory,
-        price,
+        Price: price,
         location,
         description,
-        imageUrl,
-        pickupDate,
+        image: imageUrl,
+        date: pickupDate,
         email,
         userId: user.uid,
         userName: user.displayName || "Anonymous",
       };
 
-      await createListing(listingData);
-      
+      const response = await fetch(`${API_BASE_URL}/listings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(listingData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            `Failed to create listing (status ${response.status})`
+        );
+      }
+
+      const createdListing = await response.json();
+      console.log(createdListing);
+
       toast.success("Listing created successfully!");
-      
+
       // Reset form
       form.reset();
       setCategory("");
-      
+
       // Navigate to home or listings page
       navigate("/");
     } catch (error) {
       console.error("Error creating listing:", error);
-      toast.error(error.message || "Failed to create listing. Please try again.");
+      toast.error(
+        error.message || "Failed to create listing. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -80,13 +114,10 @@ const ListingForm = () => {
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setCategory(selectedCategory);
-    
-    // Reset price to 0 if Pets is selected
-    if (selectedCategory === "Pets") {
-      const priceInput = e.target.form.price;
-      if (priceInput) {
-        priceInput.value = "0";
-      }
+
+    const priceInput = e.target.form.price;
+    if (priceInput) {
+      priceInput.value = selectedCategory === "Pets" ? "0" : "";
     }
   };
 
@@ -140,8 +171,8 @@ const ListingForm = () => {
                   value={category}
                   onChange={handleCategoryChange}
                   required
-                  className="select font-semibold select-bordered w-full bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 text-white [color-scheme:dark]"
-                  style={{ colorScheme: 'dark' }}
+                  className="select font-semibold select-bordered w-full bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 text-white scheme-dark"
+                  style={{ colorScheme: "dark" }}
                 >
                   <option value="" disabled className="text-gray-800 bg-white">
                     Select a category
@@ -152,10 +183,16 @@ const ListingForm = () => {
                   <option value="Food" className="text-gray-800 bg-white">
                     Food
                   </option>
-                  <option value="Accessories" className="text-gray-800 bg-white">
+                  <option
+                    value="Accessories"
+                    className="text-gray-800 bg-white"
+                  >
                     Accessories
                   </option>
-                  <option value="Care Products" className="text-gray-800 bg-white">
+                  <option
+                    value="Care Products"
+                    className="text-gray-800 bg-white"
+                  >
                     Care Products
                   </option>
                 </select>
@@ -238,8 +275,8 @@ const ListingForm = () => {
                   name="pickupDate"
                   required
                   min={new Date().toISOString().split("T")[0]}
-                  className="input font-semibold input-bordered w-full bg-white/20 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 text-white [color-scheme:dark]"
-                  style={{ colorScheme: 'dark' }}
+                  className="input font-semibold input-bordered w-full bg-white/20 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400 text-white scheme-dark"
+                  style={{ colorScheme: "dark" }}
                 />
               </div>
 

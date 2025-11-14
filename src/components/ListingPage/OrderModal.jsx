@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { createOrder } from "../../api/orderApi";
+import API_BASE_URL from "../../config/apiBaseUrl";
 
 const formatPrice = (price) => {
   if (price === 0 || price === "0") {
@@ -47,9 +47,9 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
       listingId: listing._id,
       listingName: listing.name,
       quantity,
-      price: listing.price,
+      price: listing.Price || listing.price,
       address: form.address.value,
-      pickupDate: form.pickupDate?.value || listing.pickupDate || "",
+      pickupDate: form.pickupDate?.value || listing.date || listing.pickupDate || "",
       phone: form.phone.value,
       notes: form.notes.value,
     };
@@ -61,7 +61,24 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
 
     try {
       setIsSubmitting(true);
-      await createOrder(orderData);
+      const response = await fetch(`${API_BASE_URL}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            `Failed to place order (status ${response.status})`
+        );
+      }
+
+      const createdOrder = await response.json();
+      console.log(createdOrder);
       toast.success("Order placed successfully!");
       form.reset();
       handleClose();
@@ -76,11 +93,15 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
   return (
     <div className={`modal ${isOpen ? "modal-open" : ""}`}>
       <div className="modal-box bg-white text-gray-800 max-w-3xl w-full">
-        <h3 className="font-bold text-2xl mb-4 text-[#357fa7]">Complete Your Order</h3>
+        <h3 className="font-bold text-2xl mb-4 text-[#357fa7]">
+          Complete Your Order
+        </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Buyer Name</label>
+              <label className="block text-sm font-medium mb-1">
+                Buyer Name
+              </label>
               <input
                 type="text"
                 value={user?.displayName || "Anonymous"}
@@ -98,7 +119,9 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Listing ID</label>
+              <label className="block text-sm font-medium mb-1">
+                Listing ID
+              </label>
               <input
                 type="text"
                 value={listing?._id || ""}
@@ -107,7 +130,9 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Listing Name</label>
+              <label className="block text-sm font-medium mb-1">
+                Listing Name
+              </label>
               <input
                 type="text"
                 value={listing?.name || ""}
@@ -124,7 +149,9 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
                 defaultValue={listing?.category === "Pets" ? 1 : 1}
                 readOnly={listing?.category === "Pets"}
                 className={`input input-bordered w-full ${
-                  listing?.category === "Pets" ? "bg-gray-100 cursor-not-allowed" : ""
+                  listing?.category === "Pets"
+                    ? "bg-gray-100 cursor-not-allowed"
+                    : ""
                 }`}
               />
             </div>
@@ -132,7 +159,7 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
               <label className="block text-sm font-medium mb-1">Price</label>
               <input
                 type="text"
-                value={formatPrice(listing?.price)}
+                value={formatPrice(listing?.Price || listing?.price)}
                 readOnly
                 className="input input-bordered w-full bg-gray-100"
               />
@@ -151,13 +178,15 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Pick-up Date</label>
+                <label className="block text-sm font-medium mb-1">
+                  Pick-up Date
+                </label>
                 <input
                   type="date"
                   name="pickupDate"
                   required
                   min={new Date().toISOString().split("T")[0]}
-                  defaultValue={listing?.pickupDate?.split("T")?.[0] || ""}
+                  defaultValue={listing?.date?.split("T")?.[0] || listing?.pickupDate?.split("T")?.[0] || ""}
                   className="input input-bordered w-full"
                 />
               </div>
@@ -175,7 +204,9 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Additional Notes</label>
+            <label className="block text-sm font-medium mb-1">
+              Additional Notes
+            </label>
             <textarea
               name="notes"
               rows="3"
@@ -192,8 +223,16 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
             >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? <span className="loading loading-spinner"></span> : "Submit Order"}
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="loading loading-spinner"></span>
+              ) : (
+                "Submit Order"
+              )}
             </button>
           </div>
         </form>

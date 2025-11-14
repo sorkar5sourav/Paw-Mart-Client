@@ -7,7 +7,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import MyContainer from "../components/MyContainer";
 import { AuthContext } from "../context/AuthContext";
-import { getOrdersByUser } from "../api/orderApi";
+import API_BASE_URL from "../config/apiBaseUrl";
 
 const formatPrice = (price) => {
   if (price === 0 || price === "0") {
@@ -128,16 +128,24 @@ const MyOrders = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const data = await getOrdersByUser(email);
-      setOrders(Array.isArray(data) ? data : data?.orders || []);
-    } catch (error) {
-      console.error("Error loading orders:", error);
-      toast.error(error.message || "Failed to load your orders");
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    fetch(`${API_BASE_URL}/orders?email=${encodeURIComponent(email)}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to load orders (status ${res.status})`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setOrders(Array.isArray(data) ? data : data?.orders || []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error loading orders:", error);
+        toast.error(error.message || "Failed to load your orders");
+        setLoading(false);
+      });
   }, [email]);
 
   useEffect(() => {

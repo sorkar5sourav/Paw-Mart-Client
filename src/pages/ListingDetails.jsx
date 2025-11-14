@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import MyContainer from "../components/MyContainer";
-import { getListingById } from "../api/listingApi";
 import { toast } from "react-hot-toast";
 import { RingLoader } from "react-spinners";
 import { AuthContext } from "../context/AuthContext";
 import OrderModal from "../components/ListingPage/OrderModal";
+import API_BASE_URL from "../config/apiBaseUrl";
 
 const ListingDetails = () => {
   const { id } = useParams();
@@ -22,10 +22,17 @@ const ListingDetails = () => {
       if (!id) {
         throw new Error("No listing ID provided");
       }
-      // console.log("Fetching listing with ID:", id);
-      const data = await getListingById(id);
-      // console.log("Listing data received:", data);
-      setListing(data);
+      const response = await fetch(`${API_BASE_URL}/listing/${id}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            `Failed to load listing (status ${response.status})`
+        );
+      }
+      const data = await response.json();
+      console.log(data);
+      setListing(data.result || data);
     } catch (error) {
       console.error("Error fetching listing details:", error);
       toast.error(
@@ -96,7 +103,7 @@ const ListingDetails = () => {
         {/* Image Section */}
         <div className="bg-gray-100 h-full flex justify-center items-center">
           <img
-            src={listing.imageUrl}
+            src={listing.image || listing.imageUrl}
             alt={listing.name}
             className="rounded-lg max-h-140 w-auto"
             onError={(e) => {
@@ -124,7 +131,7 @@ const ListingDetails = () => {
             {/* Price */}
             <div className="border-b pb-4">
               <span className="text-4xl font-bold text-[#357fa7]">
-                {formatPrice(listing.price)}
+                {formatPrice(listing.Price || listing.price)}
               </span>
               {listing.category === "Pets" && (
                 <p className="text-green-600 font-semibold mt-1">
@@ -175,7 +182,7 @@ const ListingDetails = () => {
                 />
               </svg>
               <span className="text-lg">
-                Pickup Date: {formatDate(listing.pickupDate)}
+                Pickup Date: {formatDate(listing.date || listing.pickupDate)}
               </span>
             </div>
 

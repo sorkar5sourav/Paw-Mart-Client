@@ -10,9 +10,7 @@ import CategoryFilteredProduct from "../pages/CategoryFilteredProduct";
 import MyListings from "../pages/MyListings";
 import MyOrders from "../pages/MyOrders";
 import ErrorPage from "../pages/ErrorPage";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://paw-mart-server-side.vercel.app";
+import API_BASE_URL from "../config/apiBaseUrl";
 
 const router = createBrowserRouter([
   {
@@ -26,7 +24,6 @@ const router = createBrowserRouter([
           fetch(`${API_BASE_URL}/listings`)
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               return data;
             }),
       },
@@ -49,7 +46,6 @@ const router = createBrowserRouter([
           fetch(`${API_BASE_URL}/listings`)
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               return data;
             }),
       },
@@ -72,7 +68,6 @@ const router = createBrowserRouter([
           fetch(`${API_BASE_URL}/listings`)
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               return data;
             }),
       },

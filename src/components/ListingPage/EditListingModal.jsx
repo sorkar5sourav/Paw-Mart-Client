@@ -13,13 +13,13 @@ const EditListingModal = ({ listing, isOpen, onClose, onSave }) => {
     () => ({
       name: listing?.name || "",
       category: listing?.category || "",
-      price: listing?.category === "Pets" ? 0 : listing?.price || 0,
+      price: listing?.category === "Pets" ? 0 : listing?.Price || listing?.price || 0,
       location: listing?.location || "",
       description: listing?.description || "",
-      imageUrl: listing?.imageUrl || listing?.image || "",
-      pickupDate: listing?.pickupDate
-        ? listing.pickupDate?.split("T")?.[0] || listing.pickupDate
-        : listing?.date?.split("T")?.[0] || "",
+      imageUrl: listing?.image || listing?.imageUrl || "",
+      pickupDate: listing?.date
+        ? listing.date?.split("T")?.[0] || listing.date
+        : listing?.pickupDate?.split("T")?.[0] || listing?.pickupDate || "",
     }),
     [listing]
   );
@@ -66,11 +66,11 @@ const EditListingModal = ({ listing, isOpen, onClose, onSave }) => {
     const payload = {
       name: formState.name,
       category: formState.category,
-      price: formState.category === "Pets" ? 0 : parseFloat(formState.price) || 0,
+      Price: formState.category === "Pets" ? 0 : parseFloat(formState.price) || 0,
       location: formState.location,
       description: formState.description,
-      imageUrl: formState.imageUrl,
-      pickupDate: formState.pickupDate,
+      image: formState.imageUrl,
+      date: formState.pickupDate,
       userId: listing?.userId,
     };
 

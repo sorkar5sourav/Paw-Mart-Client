@@ -1,17 +1,17 @@
 import { Link } from "react-router";
 
 const ListingCard = ({ listing }) => {
-  const { _id, name, imageUrl, category, location, price } = listing;
+  const { _id, name, image, imageUrl, category, location, Price, price } = listing;
   // console.log(listing);
   const displayPrice =
-    category === "Pets" ? "Free" : `BDT ${Number(price || 0).toFixed(2)}`;
+    category === "Pets" ? "Free" : `BDT ${Number(Price || price || 0).toFixed(2)}`;
 
   return (
     <div className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow duration-300">
       {/* Image */}
       <figure className="h-48 overflow-hidden">
         <img
-          src={imageUrl}
+          src={image || imageUrl}
           alt={name}
           className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
           onError={(e) => {

@@ -54,12 +54,23 @@ const RecentListings = ({ listings = [] }) => {
 
       <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {recentListings.map((listing) => {
-          const { _id, name, imageUrl, category, price, location } = listing;
+          const {
+            _id,
+            name,
+            image,
+            imageUrl,
+            category,
+            Price,
+            price,
+            location,
+          } = listing;
+          const listingPrice = Price || price;
+          const listingImage = image || imageUrl;
 
           const displayPrice =
-            category === "Pets" || price === 0 || price === "0"
+            category === "Pets" || listingPrice === 0 || listingPrice === "0"
               ? "Free for Adoption"
-              : `BDT ${Number(price || 0).toFixed(2)}`;
+              : `BDT ${Number(listingPrice || 0).toFixed(2)}`;
 
           return (
             <article
@@ -67,11 +78,15 @@ const RecentListings = ({ listings = [] }) => {
               className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="relative h-52 w-full overflow-hidden bg-slate-100">
-                {imageUrl ? (
+                {listingImage ? (
                   <img
-                    src={imageUrl}
+                    src={listingImage}
                     alt={name || "Listing image"}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      e.target.src =
+                        "https://i.pinimg.com/736x/44/b2/11/44b211e4d40b1b835da33b55fdf9fd13.jpg";
+                    }}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center text-slate-400">
