@@ -6,8 +6,11 @@ const MyLink = ({ to, className, children }) => {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        isActive ? "text-emerald-600" : `${className} font-bold`
+        isActive ? "text-emerald-600 text-lg" : `${className} font-800`
       }
+      style={{
+        transition: "color 0.3s ease",
+      }}
     >
       {children}
     </NavLink>

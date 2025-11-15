@@ -30,3 +30,110 @@ html[data-theme="dark"] body {
   background-color: #1a1a1a;
   color: #f5f5f5;
 }
+
+/* Ensure all text elements are white in dark mode */
+html[data-theme="dark"] * {
+  color: inherit;
+}
+
+/* Override any black or dark text colors in dark mode */
+html[data-theme="dark"] .text-slate-900,
+html[data-theme="dark"] .text-slate-800,
+html[data-theme="dark"] .text-slate-700,
+html[data-theme="dark"] .text-gray-900,
+html[data-theme="dark"] .text-gray-800,
+html[data-theme="dark"] .text-gray-700,
+html[data-theme="dark"] .text-zinc-900,
+html[data-theme="dark"] .text-zinc-800,
+html[data-theme="dark"] .text-neutral-900,
+html[data-theme="dark"] .text-neutral-800 {
+  color: #f5f5f5 !important;
+}
+
+html[data-theme="dark"] .text-slate-600,
+html[data-theme="dark"] .text-slate-500,
+html[data-theme="dark"] .text-gray-600,
+html[data-theme="dark"] .text-gray-500,
+html[data-theme="dark"] .text-zinc-600,
+html[data-theme="dark"] .text-zinc-500,
+html[data-theme="dark"] .text-neutral-600,
+html[data-theme="dark"] .text-neutral-500 {
+  color: #e5e5e5 !important;
+}
+
+/* Make all shadows white in dark mode */
+html[data-theme="dark"] .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .shadow {
+  box-shadow: 0 1px 3px 0 rgba(255, 255, 255, 0.15),
+    0 1px 2px -1px rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.15),
+    0 2px 4px -2px rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.2),
+    0 4px 6px -4px rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(255, 255, 255, 0.2),
+    0 8px 10px -6px rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(255, 255, 255, 0.25) !important;
+}
+
+html[data-theme="dark"] .shadow-none {
+  box-shadow: 0 0 #0000 !important;
+}
+
+/* Toast theme variables */
+:root,
+[data-theme="light"] {
+  --toast-bg: #ffffff;
+  --toast-color: #1a1a1a;
+}
+
+[data-theme="dark"] {
+  --toast-bg: #2d2d2d;
+  --toast-color: #f5f5f5;
+}
+
+/* Toast styling for dark mode */
+html[data-theme="dark"] [data-sonner-toast],
+html[data-theme="dark"] .react-hot-toast,
+html[data-theme="dark"] [class*="react-hot-toast"] {
+  background: #2d2d2d !important;
+  color: #f5f5f5 !important;
+  box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.2),
+    0 4px 6px -4px rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] [data-sonner-toast] > div,
+html[data-theme="dark"] .react-hot-toast > div,
+html[data-theme="dark"] [class*="react-hot-toast"] > div {
+  color: #f5f5f5 !important;
+}
+
+html[data-theme="dark"] [data-sonner-toast] svg,
+html[data-theme="dark"] .react-hot-toast svg,
+html[data-theme="dark"] [class*="react-hot-toast"] svg {
+  color: #f5f5f5 !important;
+}
+
+/* Light mode toast styling */
+html[data-theme="light"] [data-sonner-toast],
+html[data-theme="light"] .react-hot-toast,
+html[data-theme="light"] [class*="react-hot-toast"] {
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.05) !important;
+}

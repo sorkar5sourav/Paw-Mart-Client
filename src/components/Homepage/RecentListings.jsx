@@ -3,16 +3,11 @@ import { Link } from "react-router";
 
 const RecentListings = ({ listings = [] }) => {
   const recentListings = useMemo(() => {
-    // Backend already sorts by _id descending, but we'll ensure proper sorting here too
-    // MongoDB ObjectId strings maintain chronological order when compared lexicographically
     const sorted = [...listings].sort((a, b) => {
-      // Primary: Sort by _id (ObjectId contains timestamp, newer = greater)
       if (a._id && b._id) {
-        // Compare ObjectId strings (they maintain chronological order)
         if (a._id > b._id) return -1;
         if (a._id < b._id) return 1;
       }
-      // Fallback: Use createdAt/updatedAt if available
       if (a.createdAt || a.updatedAt || b.createdAt || b.updatedAt) {
         const dateA = new Date(a.createdAt || a.updatedAt || 0).getTime();
         const dateB = new Date(b.createdAt || b.updatedAt || 0).getTime();
@@ -20,7 +15,6 @@ const RecentListings = ({ listings = [] }) => {
       }
       return 0;
     });
-    // Return the 6 most recent listings
     return sorted.slice(0, 6);
   }, [listings]);
 
@@ -50,10 +44,10 @@ const RecentListings = ({ listings = [] }) => {
           <p className="text-sm font-semibold uppercase tracking-widest text-emerald-500">
             Fresh Arrivals
           </p>
-          <h2 className="mt-1 text-3xl font-bold text-slate-900 md:text-4xl">
+          <h2 className="mt-1 text-3xl font-bold text-base-content md:text-4xl">
             Recent Listings
           </h2>
-          <p className="mt-2 text-sm text-slate-600 md:text-base">
+          <p className="mt-2 text-sm text-base-content/70 md:text-base">
             Discover the latest pets and supplies added by our community.
           </p>
         </div>

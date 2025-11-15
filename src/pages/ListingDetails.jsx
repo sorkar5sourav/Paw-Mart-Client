@@ -15,52 +15,68 @@ const ListingDetails = () => {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  // const [isOrderSubmitting, setIsOrderSubmitting] = useState(false);
 
-  const fetchListingDetails = useCallback(async () => {
-    try {
-      setLoading(true);
-      if (!id) {
-        throw new Error("No listing ID provided");
-      }
-      
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
+  const fetchListingDetails = useCallback(
+    async (abortSignal) => {
+      try {
+        setLoading(true);
+        if (!id) {
+          throw new Error("No listing ID provided");
+        }
 
-      const token = await getAuthToken(user);
-      if (!token) {
-        throw new Error("Failed to get authentication token");
-      }
+        if (!user) {
+          throw new Error("User not authenticated");
+        }
 
-      const response = await fetch(`${API_BASE_URL}/listing/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message ||
-            `Failed to load listing (status ${response.status})`
-        );
+        const token = await getAuthToken(user);
+        if (!token) {
+          throw new Error("Failed to get authentication token");
+        }
+
+        const response = await fetch(`${API_BASE_URL}/listing/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          signal: abortSignal,
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message ||
+              `Failed to load listing (status ${response.status})`
+          );
+        }
+        const data = await response.json();
+        if (!abortSignal.aborted) {
+          setListing(data.result || data);
+        }
+      } catch (error) {
+        if (error.name === "AbortError") {
+          return; // Request was cancelled, don't show error
+        }
+        console.error("Error fetching listing details:", error);
+        if (!abortSignal.aborted) {
+          toast.error(
+            error.message || "Failed to load listing details. Please try again."
+          );
+          navigate("/pets-supply");
+        }
+      } finally {
+        if (!abortSignal.aborted) {
+          setLoading(false);
+        }
       }
-      const data = await response.json();
-      // console.log(data);
-      setListing(data.result || data);
-    } catch (error) {
-      console.error("Error fetching listing details:", error);
-      toast.error(
-        error.message || "Failed to load listing details. Please try again."
-      );
-      navigate("/pets-supply");
-    } finally {
-      setLoading(false);
-    }
-  }, [id, navigate, user]);
+    },
+    [id, navigate, user]
+  );
 
   useEffect(() => {
-    fetchListingDetails();
+    const abortController = new AbortController();
+    fetchListingDetails(abortController.signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [fetchListingDetails]);
 
   const formatPrice = (price) => {
@@ -202,7 +218,7 @@ const ListingDetails = () => {
             </div>
 
             {/* Description */}
-            <div className="border-t border-base-300 pt-4">
+            <div className="border-t border-gray-200 pt-4">
               <h2 className="text-2xl font-semibold mb-3 text-base-content">
                 Description
               </h2>
@@ -212,7 +228,7 @@ const ListingDetails = () => {
             </div>
 
             {/* Contact Information */}
-            <div className="border-t border-base-300 pt-4">
+            <div className="border-t border-gray-300 pt-4">
               <h2 className="text-2xl font-semibold mb-3 text-base-content">
                 Contact Information
               </h2>

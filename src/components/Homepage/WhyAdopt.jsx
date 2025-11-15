@@ -59,10 +59,10 @@ const WhyAdopt = () => {
           <p className="text-sm font-semibold uppercase tracking-widest text-emerald-600">
             Why Adopt from PawMart?
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-slate-900 md:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold text-base-content md:text-4xl">
             Rescue. Rehabilitate. Rehome.
           </h2>
-          <p className="mt-4 text-sm text-slate-700 md:text-base">
+          <p className="mt-4 text-sm text-base-content/70 md:text-base">
             When you adopt through PawMart, you become part of a compassionate
             network that champions rescue over retail. Your decision keeps pets
             from spending another night in overcrowded shelters and helps us

@@ -19,44 +19,63 @@ const MyListings = () => {
 
   const userId = user?.uid || user?.userId || user?.id || "";
 
-  const loadUserListings = useCallback(async () => {
-    if (!userId || !user) {
-      setListings([]);
-      setLoading(false);
-      return;
-    }
-    try {
-      setLoading(true);
-      const token = await getAuthToken(user);
-      if (!token) {
-        throw new Error("Failed to get authentication token");
+  const loadUserListings = useCallback(
+    async (abortSignal) => {
+      if (!userId || !user) {
+        setListings([]);
+        setLoading(false);
+        return;
       }
-
-      const response = await fetch(
-        `${API_BASE_URL}/user-listings?userId=${encodeURIComponent(userId)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      try {
+        setLoading(true);
+        const token = await getAuthToken(user);
+        if (!token) {
+          throw new Error("Failed to get authentication token");
         }
-      );
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message ||
-            `Failed to load listings (status ${response.status})`
+
+        const response = await fetch(
+          `${API_BASE_URL}/user-listings?userId=${encodeURIComponent(userId)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            signal: abortSignal,
+          }
         );
+        if (!response.ok) {
+          if (response.status === 403) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(
+              errorData.message ||
+                "Access denied: You can only view your own listings"
+            );
+          }
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message ||
+              `Failed to load listings (status ${response.status})`
+          );
+        }
+        const data = await response.json();
+        if (!abortSignal.aborted) {
+          setListings(Array.isArray(data) ? data : data?.listings || []);
+        }
+      } catch (error) {
+        if (error.name === "AbortError") {
+          return; // Request was cancelled, don't show error
+        }
+        console.error("Error loading user listings:", error);
+        if (!abortSignal.aborted) {
+          toast.error(error.message || "Failed to load your listings");
+        }
+      } finally {
+        if (!abortSignal.aborted) {
+          setLoading(false);
+        }
       }
-      const data = await response.json();
-      console.log(data);
-      setListings(Array.isArray(data) ? data : data?.listings || []);
-    } catch (error) {
-      console.error("Error loading user listings:", error);
-      toast.error(error.message || "Failed to load your listings");
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, user]);
+    },
+    [userId, user]
+  );
 
   useEffect(() => {
     if (authLoading) return;
@@ -67,7 +86,12 @@ const MyListings = () => {
       return;
     }
 
-    loadUserListings();
+    const abortController = new AbortController();
+    loadUserListings(abortController.signal);
+
+    return () => {
+      abortController.abort();
+    };
   }, [authLoading, user, navigate, loadUserListings]);
 
   const handleEdit = (listing) => {
@@ -107,6 +131,12 @@ const MyListings = () => {
       );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        if (response.status === 403) {
+          throw new Error(
+            errorData.message ||
+              "Access denied: You do not have permission to delete this listing"
+          );
+        }
         throw new Error(
           errorData.message ||
             `Failed to delete listing (status ${response.status})`
@@ -148,13 +178,18 @@ const MyListings = () => {
       );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        if (response.status === 403) {
+          throw new Error(
+            errorData.message ||
+              "Access denied: You do not have permission to update this listing"
+          );
+        }
         throw new Error(
           errorData.message ||
             `Failed to update listing (status ${response.status})`
         );
       }
       const updatedListingResponse = await response.json();
-      console.log(updatedListingResponse);
       const updatedListing =
         updatedListingResponse?.listing || updatedListingResponse;
       setListings((prev) =>
@@ -207,7 +242,9 @@ const MyListings = () => {
         </div>
         <div className="text-sm text-base-content/60">
           Total Listings:{" "}
-          <span className="font-semibold text-base-content">{listings.length}</span>
+          <span className="font-semibold text-base-content">
+            {listings.length}
+          </span>
         </div>
       </div>
 
@@ -257,12 +294,16 @@ const MyListings = () => {
                   <td>
                     {listing.category === "Pets"
                       ? "Free"
-                      : `BDT ${Number(listing.Price || listing.price || 0).toFixed(2)}`}
+                      : `BDT ${Number(
+                          listing.Price || listing.price || 0
+                        ).toFixed(2)}`}
                   </td>
                   <td>{listing.location}</td>
                   <td>
                     {listing.date || listing.pickupDate
-                      ? new Date(listing.date || listing.pickupDate).toLocaleDateString()
+                      ? new Date(
+                          listing.date || listing.pickupDate
+                        ).toLocaleDateString()
                       : "N/A"}
                   </td>
                   <td>

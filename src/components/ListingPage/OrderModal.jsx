@@ -50,9 +50,11 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
       quantity,
       price: listing.Price || listing.price,
       address: form.address.value,
-      pickupDate: form.pickupDate?.value || listing.date || listing.pickupDate || "",
+      pickupDate:
+        form.pickupDate?.value || listing.date || listing.pickupDate || "",
       phone: form.phone.value,
       notes: form.notes.value,
+      status: "pending",
     };
 
     if (!orderData.address || !orderData.pickupDate || !orderData.phone) {
@@ -86,8 +88,6 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
         );
       }
 
-      const createdOrder = await response.json();
-      console.log(createdOrder);
       toast.success("Order placed successfully!");
       form.reset();
       handleClose();
@@ -195,7 +195,11 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
                   name="pickupDate"
                   required
                   min={new Date().toISOString().split("T")[0]}
-                  defaultValue={listing?.date?.split("T")?.[0] || listing?.pickupDate?.split("T")?.[0] || ""}
+                  defaultValue={
+                    listing?.date?.split("T")?.[0] ||
+                    listing?.pickupDate?.split("T")?.[0] ||
+                    ""
+                  }
                   className="input input-bordered w-full"
                 />
               </div>

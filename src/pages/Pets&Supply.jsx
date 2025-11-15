@@ -1,28 +1,42 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData, useSearchParams } from "react-router";
 import MyContainer from "../components/MyContainer";
 import ListingCard from "../components/ListingPage/ListingCard";
 
 const PetsSupply = () => {
   const listingsData = useLoaderData();
   const listings = useMemo(() => listingsData || [], [listingsData]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
   const [filteredListings, setFilteredListings] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState(
+    categoryFromUrl || "All"
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
-  const categories = ["All", "Pets", "Food", "Accessories", "Pet Care Products"];
+  const categories = [
+    "All",
+    "Pets",
+    "Food",
+    "Accessories",
+    "Pet Care Products",
+  ];
+
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [categoryFromUrl]);
 
   useEffect(() => {
     let filtered = [...listings];
 
-    // Filter by category
     if (selectedCategory !== "All") {
       filtered = filtered.filter(
         (listing) => listing.category === selectedCategory
       );
     }
 
-    // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -65,7 +79,15 @@ const PetsSupply = () => {
           <b>Category : </b>
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => {
+              const newCategory = e.target.value;
+              setSelectedCategory(newCategory);
+              if (newCategory === "All") {
+                setSearchParams({});
+              } else {
+                setSearchParams({ category: newCategory });
+              }
+            }}
             className="select select-bordered w-full md:w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             {categories.map((category) => (

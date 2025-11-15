@@ -2,7 +2,6 @@ import { Link } from "react-router";
 
 const ListingCard = ({ listing }) => {
   const { _id, name, image, imageUrl, category, location, Price, price } = listing;
-  // console.log(listing);
   const displayPrice =
     category === "Pets" ? "Free" : `BDT ${Number(Price || price || 0).toFixed(2)}`;
 

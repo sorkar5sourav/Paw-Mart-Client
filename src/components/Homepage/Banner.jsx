@@ -125,7 +125,7 @@ const Banner = () => {
             <MotionA
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              href="/category-filtered-product/Pets"
+              href="/pets-supply?category=Pets"
               className="btn btn-outline border-white text-white hover:border-emerald-300 hover:bg-emerald-500 hover:text-white"
             >
               View Pets

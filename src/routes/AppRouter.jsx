@@ -6,7 +6,6 @@ import Register from "../pages/Register";
 import ListingForm from "../pages/ListingForm";
 import PetsSupply from "../pages/Pets&Supply";
 import ListingDetails from "../pages/ListingDetails";
-import CategoryFilteredProduct from "../pages/CategoryFilteredProduct";
 import MyListings from "../pages/MyListings";
 import MyOrders from "../pages/MyOrders";
 import ErrorPage from "../pages/ErrorPage";
@@ -77,16 +76,6 @@ const router = createBrowserRouter([
             <ListingDetails />
           </PrivateRoute>
         ),
-      },
-      {
-        path: "/category-filtered-product/:categoryName",
-        element: <CategoryFilteredProduct />,
-        loader: () =>
-          fetch(`${API_BASE_URL}/listings`)
-            .then((res) => res.json())
-            .then((data) => {
-              return data;
-            }),
       },
     ],
   },

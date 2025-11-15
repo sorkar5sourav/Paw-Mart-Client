@@ -75,13 +75,13 @@ const PetHeroes = () => {
         <p className="text-sm font-semibold uppercase tracking-widest text-emerald-500">
           Meet Our Pet Heroes
         </p>
-        <h2 className="mt-2 text-3xl font-bold text-slate-900 md:text-4xl">
+        <h2 className="mt-2 text-3xl font-bold text-base-content md:text-4xl">
           The Faces Behind Every Happy Tail
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600 md:text-base">
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-base-content/70 md:text-base">
           From fosters to adopters, these compassionate caretakers make PawMart
           a thriving rescue community. Their stories inspire families to choose
-          adoption and show what’s possible when we rally for animals in need.
+          adoption and show what's possible when we rally for animals in need.
         </p>
       </div>
 

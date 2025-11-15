@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
@@ -24,17 +24,8 @@ const Register = () => {
     const email = e.target.email?.value;
     const password = e.target.password?.value;
 
-    console.log("signup function entered", {
-      email,
-      displayName,
-      photoURL,
-      password,
-    });
-
     const regExp =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()\-_=+])[A-Za-z\d@$!%*?&#^()\-_=+]{8,}$/;
-
-    // console.log(regExp.test(password));
 
     if (!regExp.test(password)) {
       toast.error(
@@ -47,20 +38,16 @@ const Register = () => {
       .then((res) => {
         updateProfileFunc(displayName, photoURL)
           .then(() => {
-            console.log(res);
             setLoading(false);
             setUser(res.user);
             toast.success("Signup successful");
             navigate(from);
           })
           .catch((e) => {
-            console.log(e);
             toast.error(e.message);
           });
       })
       .catch((e) => {
-        console.log(e);
-        console.log(e.code);
         if (e.code === "auth/email-already-in-use") {
           toast.error(
             "User already exists in the database. Etai bastob haahahahaha"
@@ -94,10 +81,11 @@ const Register = () => {
       >
         X
       </Link>
-      <h3 className="font-bold text-4xl mb-4 text-primary">
-        Sign Up Now
-      </h3>
+
       <div className="card bg-base-100 text-base-content w-full max-w-lg shadow-2xl p-10 transition-colors duration-300">
+        <h3 className="font-bold text-center text-4xl mb-10 text-primary">
+          Sign Up Now
+        </h3>
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Name</label>
@@ -150,7 +138,9 @@ const Register = () => {
           </div>
 
           <div className="flex justify-between items-center text-sm">
-            <span className="text-base-content/70">Already have an account?</span>
+            <span className="text-base-content/70">
+              Already have an account?
+            </span>
             <Link
               to={"/login"}
               state={{ from: from }}

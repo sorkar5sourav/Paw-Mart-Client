@@ -5,7 +5,6 @@ import { IoEyeOff } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import MyContainer from "../components/MyContainer";
-// import { Navigate } from "react-router";
 
 const LogIn = () => {
   const [show, setShow] = useState(false);
@@ -23,45 +22,33 @@ const LogIn = () => {
   const from = location.state?.from || "/";
   const navigate = useNavigate();
 
-  // console.log(location);
-
   const handleSignin = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     const email = form.email?.value;
     const password = form.password?.value;
-    // console.log({ email, password });
     signInWithEmailAndPasswordFunc(email, password)
       .then((res) => {
-        // console.log(res);
         setLoading(false);
 
-        if (!res.user?.emailVerified) {
-          toast.error("Your email is not verified.");
-          return;
-        }
         setUser(res.user);
-        toast.success("Signin successful");
+        toast.success("Login successful");
         navigate(from);
       })
       .catch((e) => {
-        console.log(e);
         toast.error(e.message);
       });
   };
 
   const handleGoogleSignin = () => {
-    // console.log("google signin");
     signInWithEmailFunc()
       .then((res) => {
-        // console.log(res);
         setLoading(false);
         setUser(res.user);
         navigate(from);
         toast.success("Signin successful");
       })
       .catch((e) => {
-        console.log(e);
         toast.error(e.message);
       });
   };
@@ -74,10 +61,11 @@ const LogIn = () => {
       >
         X
       </Link>
-      <h3 className="font-bold text-4xl mb-4 text-primary">
-        LogIn Your Account
-      </h3>
+
       <div className="card bg-base-100 text-base-content w-full max-w-lg shadow-2xl p-10 transition-colors duration-300">
+        <h3 className="font-bold text-center text-4xl mb-10 text-primary">
+          LogIn Your Account
+        </h3>
         <form onSubmit={handleSignin} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
@@ -119,18 +107,12 @@ const LogIn = () => {
             >
               Forgot Password?
             </Link>
-            <Link
-              to={"/register"}
-              className="link link-hover text-[#357fa7]"
-            >
+            <Link to={"/register"} className="link link-hover text-[#357fa7]">
               New? 👉Sign Up
             </Link>
           </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary w-full"
-          >
+          <button type="submit" className="btn btn-primary w-full">
             Login
           </button>
 
@@ -153,6 +135,3 @@ const LogIn = () => {
 };
 
 export default LogIn;
-
-// onClick={handleGoogleSignin}
-// onClick={handleGithubSignin}

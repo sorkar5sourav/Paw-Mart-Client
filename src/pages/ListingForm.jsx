@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
 import MyContainer from "../components/MyContainer";
@@ -38,7 +38,6 @@ const ListingForm = () => {
     const pickupDate = form.pickupDate?.value;
     const email = user.email;
 
-    // Validation
     if (
       !name ||
       !selectedCategory ||
@@ -99,17 +98,13 @@ const ListingForm = () => {
         );
       }
 
-      const createdListing = await response.json();
-      console.log(createdListing);
+      await response.json();
 
       toast.success("Listing created successfully!");
 
-      // Reset form
       form.reset();
       setCategory("");
-
-      // Navigate to home or listings page
-      navigate("/");
+      navigate("/listings");
     } catch (error) {
       console.error("Error creating listing:", error);
       toast.error(
@@ -130,29 +125,12 @@ const ListingForm = () => {
     }
   };
 
-  if (!user) {
-    return (
-      <MyContainer className="flex-1 flex-col justify-center items-center flex min-h-screen">
-        <div className="card bg-[#357fa7] text-white w-full max-w-md shadow-2xl">
-          <div className="card-body text-center">
-            <h2 className="text-2xl font-bold mb-4">Login Required</h2>
-            <p className="mb-6">Please login to create a listing</p>
-            <Link to="/login" className="btn btn-outline btn-accent">
-              Go to Login
-            </Link>
-          </div>
-        </div>
-      </MyContainer>
-    );
-  }
-
   return (
     <MyContainer className="flex-1 flex-col justify-center items-center flex min-h-screen py-8 px-4">
-      <h3 className="font-bold text-4xl mb-4 text-primary">
+      <div className="card bg-base-100 text-base-content w-full max-w-3xl shadow-2xl p-10 transition-colors duration-300">
+        <h3 className="font-bold text-center text-4xl mb-10 text-primary">
           Create New Listing
         </h3>
-      <div className="card bg-base-100 text-base-content w-full max-w-3xl shadow-2xl p-10 transition-colors duration-300">
-        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Product/Pet Name */}

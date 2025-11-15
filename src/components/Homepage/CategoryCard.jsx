@@ -19,7 +19,8 @@ const categories = [
   },
   {
     title: "Accessories",
-    description: "Leashes, PetCareProducts, beds, and gear to keep tails wagging.",
+    description:
+      "Leashes, PetCareProducts, beds, and gear to keep tails wagging.",
     icon: "🎀",
     accent: "bg-sky-100/70",
     value: "Accessories",
@@ -64,8 +65,7 @@ const CategoryCard = () => {
   const navigate = useNavigate();
 
   const handleNavigate = (categoryValue) => {
-    const encoded = encodeURIComponent(categoryValue);
-    navigate(`/category-filtered-product/${encoded}`);
+    navigate(`/pets-supply?category=${encodeURIComponent(categoryValue)}`);
   };
 
   return (
@@ -80,10 +80,10 @@ const CategoryCard = () => {
         <p className="text-sm font-semibold uppercase tracking-widest text-emerald-500">
           Explore Categories
         </p>
-        <h2 className="mt-2 text-3xl font-bold text-slate-900 md:text-4xl">
+        <h2 className="mt-2 text-3xl font-bold text-base-content md:text-4xl">
           Everything Your Pet Needs
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600 md:text-base">
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-base-content/70 md:text-base">
           Browse our curated sections to find adoptable companions, nourishing
           food, playful accessories, and trusted care essentials.
         </p>
@@ -102,7 +102,7 @@ const CategoryCard = () => {
                 handleNavigate(value);
               }
             }}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-6 shadow transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-300"
+            className="group relative cursor-pointer overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-6 shadow transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             variants={cardVariants}
           >
             <div
@@ -114,10 +114,10 @@ const CategoryCard = () => {
                   {icon}
                 </span>
               </div>
-              <h3 className="mt-6 text-xl font-semibold text-slate-900">
+              <h3 className="mt-6 text-xl font-semibold text-base-content">
                 {title}
               </h3>
-              <p className="mt-3 text-sm text-slate-600">{description}</p>
+              <p className="mt-3 text-sm text-base-content/70">{description}</p>
               <button
                 type="button"
                 onClick={(event) => {

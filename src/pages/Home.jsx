@@ -9,12 +9,14 @@ import PetHeroes from "../components/Homepage/PetHeroes";
 const Homepage = () => {
   const listings = useLoaderData() || [];
   return (
-    <MyContainer className="flex min-h-screen flex-1 flex-col gap-12 py-10">
-      <Banner />
-      <CategoryCard />
-      <RecentListings listings={listings} />
-      <WhyAdopt />
-      <PetHeroes />
+    <MyContainer className="flex min-h-screen flex-1 flex-col py-10">
+      <div className="mx-4 flex flex-col gap-12">
+        <Banner />
+        <CategoryCard />
+        <RecentListings listings={listings} />
+        <WhyAdopt />
+        <PetHeroes />
+      </div>
     </MyContainer>
   );
 };

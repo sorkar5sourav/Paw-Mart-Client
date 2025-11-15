@@ -3,15 +3,12 @@ import { AuthContext } from "../../context/AuthContext";
 import { RingLoader } from "react-spinners";
 import { Link, NavLink } from "react-router";
 import MyContainer from "../MyContainer";
-// import ThemeToggle from "../ThemeToggle/ThemeToggle";
-
 import { toast } from "react-hot-toast";
 import { useContext } from "react";
 import ThemeToggle from "./ThemeToggle";
+
 const Navbar = () => {
   const { user, signoutUserFunc, setUser, loading } = useContext(AuthContext);
-
-  // console.log(user);
   const handleSignout = () => {
     signoutUserFunc()
       .then(() => {
@@ -70,7 +67,7 @@ const Navbar = () => {
             </ul>
           </div>
           <NavLink to="/">
-            <div className="flex items-center text-xl font-bold text-primary">
+            <div className="flex items-center text-xl font-bold text-emerald-600">
               <img
                 src="https://i.ibb.co.com/KjQ1LCtV/Gemini-Generated-Image-qf5rsjqf5rsjqf5r.png"
                 className="h-10 mr-2 w-10 rounded-full"
@@ -143,18 +140,28 @@ const Navbar = () => {
                   </li>
                 </ul>
               </div>
-              <button onClick={handleSignout} className="btn btn-outline btn-error py-3 px-8 hover:scale-105 transition ease-in-out rounded-lg">
+              <button
+                onClick={handleSignout}
+                className="btn btn-outline btn-error p-3 md:px-8 hover:scale-105 transition ease-in-out rounded-lg"
+              >
                 Logout
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2 btn btn-outline hover:border-primary hover:bg-primary hover:text-primary-content">
-              <Link to={"/login"} className="text-base-content">
+            <div className="flex items-center gap-2 btn btn-outline hover:border-primary hover:bg-primary">
+              <MyLink
+                to={"/login"}
+                className="text-base-content  hover:text-emerald-600"
+              >
                 Login
-              </Link> /
-              <Link to={"/register"} className="text-base-content">
+              </MyLink>{" "}
+              /
+              <MyLink
+                to={"/register"}
+                className="text-base-content  hover:text-emerald-600"
+              >
                 Register
-              </Link>
+              </MyLink>
             </div>
           )}
         </div>
@@ -164,6 +171,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-//
-//
