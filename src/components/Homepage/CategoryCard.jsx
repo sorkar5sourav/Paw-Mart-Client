@@ -19,7 +19,7 @@ const categories = [
   },
   {
     title: "Accessories",
-    description: "Leashes, toys, beds, and gear to keep tails wagging.",
+    description: "Leashes, PetCareProducts, beds, and gear to keep tails wagging.",
     icon: "🎀",
     accent: "bg-sky-100/70",
     value: "Accessories",
@@ -102,7 +102,7 @@ const CategoryCard = () => {
                 handleNavigate(value);
               }
             }}
-            className="group relative cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
+            className="group relative cursor-pointer overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-6 shadow transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-300"
             variants={cardVariants}
           >
             <div

@@ -101,8 +101,8 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
 
   return (
     <div className={`modal ${isOpen ? "modal-open" : ""}`}>
-      <div className="modal-box bg-white text-gray-800 max-w-3xl w-full">
-        <h3 className="font-bold text-2xl mb-4 text-[#357fa7]">
+      <div className="modal-box bg-base-100 text-base-content max-w-3xl w-full transition-colors duration-300">
+        <h3 className="font-bold text-2xl mb-4 text-primary">
           Complete Your Order
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,7 +115,7 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
                 type="text"
                 value={user?.displayName || "Anonymous"}
                 readOnly
-                className="input input-bordered w-full bg-gray-100"
+                className="input input-bordered w-full bg-base-200"
               />
             </div>
             <div>
@@ -124,7 +124,7 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
                 type="email"
                 value={user?.email || ""}
                 readOnly
-                className="input input-bordered w-full bg-gray-100"
+                className="input input-bordered w-full bg-base-200"
               />
             </div>
             <div>
@@ -135,7 +135,7 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
                 type="text"
                 value={listing?._id || ""}
                 readOnly
-                className="input input-bordered w-full bg-gray-100"
+                className="input input-bordered w-full bg-base-200"
               />
             </div>
             <div>
@@ -146,7 +146,7 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
                 type="text"
                 value={listing?.name || ""}
                 readOnly
-                className="input input-bordered w-full bg-gray-100"
+                className="input input-bordered w-full bg-base-200"
               />
             </div>
             <div>
@@ -170,7 +170,7 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
                 type="text"
                 value={formatPrice(listing?.Price || listing?.price)}
                 readOnly
-                className="input input-bordered w-full bg-gray-100"
+                className="input input-bordered w-full bg-base-200"
               />
             </div>
           </div>

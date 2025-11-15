@@ -5,7 +5,7 @@ const categories = [
   { value: "Pets", label: "Pets" },
   { value: "Food", label: "Food" },
   { value: "Accessories", label: "Accessories" },
-  { value: "Toys", label: "Toys" },
+  { value: "PetCareProducts", label: "PetCareProducts" },
 ];
 
 const EditListingModal = ({ listing, isOpen, onClose, onSave }) => {
@@ -88,8 +88,8 @@ const EditListingModal = ({ listing, isOpen, onClose, onSave }) => {
 
   return (
     <div className={`modal ${isOpen ? "modal-open" : ""}`}>
-      <div className="modal-box bg-white text-gray-800 max-w-3xl w-full">
-        <h3 className="font-bold text-2xl mb-4 text-[#357fa7]">Update Listing</h3>
+      <div className="modal-box bg-base-100 text-base-content max-w-3xl w-full transition-colors duration-300">
+        <h3 className="font-bold text-2xl mb-4 text-primary">Update Listing</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>

@@ -10,7 +10,7 @@ const PetsSupply = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const categories = ["All", "Pets", "Food", "Accessories", "Toys"];
+  const categories = ["All", "Pets", "Food", "Accessories", "Pet Care Products"];
 
   useEffect(() => {
     let filtered = [...listings];
@@ -39,10 +39,10 @@ const PetsSupply = () => {
   return (
     <MyContainer className="flex-1 py-8 px-4 min-h-screen">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">
+        <h1 className="text-4xl font-bold text-center mb-2 text-base-content">
           Pets & Supplies
         </h1>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-base-content/70">
           Browse all available listings
         </p>
       </div>
@@ -79,7 +79,7 @@ const PetsSupply = () => {
 
       {/* Results Count */}
       <div className="mb-6">
-        <p className="text-gray-600">
+        <p className="text-base-content/70">
           Showing {filteredListings.length} of {listings.length} listings
         </p>
       </div>
@@ -87,8 +87,8 @@ const PetsSupply = () => {
       {/* Listings Grid */}
       {filteredListings.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No listings found</p>
-          <p className="text-gray-400 mt-2">
+          <p className="text-base-content/80 text-lg">No listings found</p>
+          <p className="text-base-content/60 mt-2">
             Try adjusting your filters or search query
           </p>
         </div>

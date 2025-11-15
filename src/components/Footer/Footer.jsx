@@ -6,7 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 const Footer = () => {
   const { user } = useContext(AuthContext);
   return (
-    <div className="bg-[#1c3c5a] text-neutral-content">
+    <div className="bg-base-300 text-base-content transition-colors duration-300">
       <MyContainer className="footer sm:footer-horizontal p-10 md:px-0 lg:p-10">
         <div className="">
           <div className="flex flex-col md:flex-row md:items-center">

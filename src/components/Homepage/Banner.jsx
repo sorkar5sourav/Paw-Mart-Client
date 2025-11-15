@@ -75,7 +75,7 @@ const Banner = () => {
         <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-r from-black/70 via-black/40 to-black/10" />
 
         <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-center gap-4 px-6 text-white md:px-14">
-          <span className="pointer-events-auto inline-flex w-fit items-center rounded-full bg-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-widest md:text-sm">
+          <span className="pointer-events-auto inline-flex w-fit items-center rounded-full bg-base-100/20 backdrop-blur-sm px-4 py-1 text-xs font-semibold uppercase tracking-widest md:text-sm">
             PawMart Adoption Center
           </span>
           <AnimatePresence mode="wait">

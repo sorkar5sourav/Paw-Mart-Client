@@ -46,7 +46,7 @@ const ListingDetails = () => {
         );
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       setListing(data.result || data);
     } catch (error) {
       console.error("Error fetching listing details:", error);
@@ -88,7 +88,7 @@ const ListingDetails = () => {
     return (
       <MyContainer className="flex-1 flex-col justify-center items-center flex min-h-screen">
         <RingLoader color="#357fa7" size={60} />
-        <p className="mt-4 text-gray-600">Loading listing details...</p>
+        <p className="mt-4 text-base-content/70">Loading listing details...</p>
       </MyContainer>
     );
   }
@@ -116,7 +116,7 @@ const ListingDetails = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Image Section */}
-        <div className="bg-gray-100 h-full flex justify-center items-center">
+        <div className="bg-base-200 h-full flex justify-center items-center rounded-lg transition-colors duration-300">
           <img
             src={listing.image || listing.imageUrl}
             alt={listing.name}
@@ -134,7 +134,7 @@ const ListingDetails = () => {
             {/* Title and Category */}
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-4xl font-bold text-gray-800">
+                <h1 className="text-4xl font-bold text-base-content">
                   {listing.name}
                 </h1>
                 <span className="badge badge-primary badge-lg">
@@ -156,7 +156,7 @@ const ListingDetails = () => {
             </div>
 
             {/* Location */}
-            <div className="flex items-center text-gray-700">
+            <div className="flex items-center text-base-content">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-2"
@@ -181,7 +181,7 @@ const ListingDetails = () => {
             </div>
 
             {/* Pickup Date */}
-            <div className="flex items-center text-gray-700">
+            <div className="flex items-center text-base-content">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 mr-2"
@@ -202,22 +202,22 @@ const ListingDetails = () => {
             </div>
 
             {/* Description */}
-            <div className="border-t pt-4">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-800">
+            <div className="border-t border-base-300 pt-4">
+              <h2 className="text-2xl font-semibold mb-3 text-base-content">
                 Description
               </h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <p className="text-base-content/80 leading-relaxed whitespace-pre-wrap">
                 {listing.description}
               </p>
             </div>
 
             {/* Contact Information */}
-            <div className="border-t pt-4">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-800">
+            <div className="border-t border-base-300 pt-4">
+              <h2 className="text-2xl font-semibold mb-3 text-base-content">
                 Contact Information
               </h2>
               <div className="space-y-2">
-                <div className="flex items-center text-gray-700">
+                <div className="flex items-center text-base-content">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5 mr-2"
@@ -235,7 +235,7 @@ const ListingDetails = () => {
                   <span>{listing.email}</span>
                 </div>
                 {listing.userName && (
-                  <div className="flex items-center text-gray-700">
+                  <div className="flex items-center text-base-content">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 mr-2"

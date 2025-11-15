@@ -48,7 +48,7 @@ const MotionArticle = motion.article;
 const WhyAdopt = () => {
   return (
     <MotionSection
-      className="w-full rounded-3xl bg-emerald-50/60 p-8 shadow-sm md:p-12"
+      className="w-full rounded-3xl bg-emerald-500/10 p-8 shadow-md md:p-12"
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
@@ -73,13 +73,13 @@ const WhyAdopt = () => {
           {reasons.map(({ title, description }) => (
             <MotionArticle
               key={title}
-              className="rounded-2xl border border-emerald-100 bg-white/80 p-5 shadow"
+              className="rounded-2xl border border-primary/20 bg-base-100/80 backdrop-blur-sm p-5 shadow transition-colors duration-300"
               variants={cardVariants}
             >
-              <h3 className="text-lg font-semibold text-emerald-700">
+              <h3 className="text-lg font-semibold text-primary">
                 {title}
               </h3>
-              <p className="mt-2 text-sm text-slate-600">{description}</p>
+              <p className="mt-2 text-sm text-base-content/70">{description}</p>
             </MotionArticle>
           ))}
         </div>

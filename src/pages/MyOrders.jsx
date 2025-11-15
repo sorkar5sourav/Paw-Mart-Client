@@ -119,6 +119,7 @@ const MyOrders = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const email = user?.email || "";
 
@@ -172,11 +173,55 @@ const MyOrders = () => {
     loadOrders();
   }, [authLoading, user, navigate, loadOrders]);
 
+  const handleDeleteOrder = async (order) => {
+    if (!user) {
+      toast.error("User not authenticated");
+      return;
+    }
+
+    const confirmation = window.confirm(
+      `Are you sure you want to delete the order for "${order.listingName}"? This action cannot be undone.`
+    );
+
+    if (!confirmation) return;
+
+    try {
+      setIsDeleting(true);
+      const token = await getAuthToken(user);
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
+      const response = await fetch(`${API_BASE_URL}/orders/${order._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `Failed to delete order (status ${response.status})`
+        );
+      }
+
+      // Remove the order from the local state
+      setOrders((prev) => prev.filter((item) => item._id !== order._id));
+      toast.success("Order deleted successfully");
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      toast.error(error.message || "Failed to delete order");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <MyContainer className="flex-1 flex-col justify-center items-center flex min-h-screen">
         <RingLoader color="#357fa7" size={60} />
-        <p className="mt-4 text-gray-600">Loading your orders...</p>
+        <p className="mt-4 text-base-content/70">Loading your orders...</p>
       </MyContainer>
     );
   }
@@ -189,15 +234,15 @@ const MyOrders = () => {
     <MyContainer className="flex-1 py-8 px-4 min-h-screen">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">My Orders</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-base-content">My Orders</h1>
+          <p className="text-base-content/70">
             Review your adoption requests and supply orders.
           </p>
         </div>
         <div className="flex flex-col gap-2 items-end md:items-center">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-base-content/60">
             Total Orders:{" "}
-            <span className="font-semibold text-gray-700">{orders.length}</span>
+            <span className="font-semibold text-base-content">{orders.length}</span>
           </div>
           {orders.length > 0 && (
             <button
@@ -217,11 +262,11 @@ const MyOrders = () => {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+        <div className="bg-base-100 shadow rounded-lg p-8 text-center transition-colors duration-300">
+          <h2 className="text-xl font-semibold text-base-content mb-2">
             No orders yet
           </h2>
-          <p className="text-gray-500 mb-4">
+          <p className="text-base-content/70 mb-4">
             Place an order to see it listed here.
           </p>
           <button
@@ -232,10 +277,10 @@ const MyOrders = () => {
           </button>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white shadow rounded-lg">
+        <div className="overflow-x-auto bg-base-100 shadow rounded-lg transition-colors duration-300">
           <table className="table w-full">
             <thead>
-              <tr className="bg-gray-100 text-gray-700">
+              <tr className="bg-base-200 text-base-content">
                 <th>Listing</th>
                 <th>Buyer</th>
                 <th>Price</th>
@@ -244,6 +289,7 @@ const MyOrders = () => {
                 <th>Pick-up Date</th>
                 <th>Phone</th>
                 <th>Status</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -251,10 +297,10 @@ const MyOrders = () => {
                 <tr key={order._id} className="hover">
                   <td>
                     <div>
-                      <p className="font-semibold text-gray-800">
+                      <p className="font-semibold text-base-content">
                         {order.listingName}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-base-content/60">
                         ID: {order.listingId}
                       </p>
                     </div>
@@ -280,6 +326,23 @@ const MyOrders = () => {
                     <span className="badge badge-outline badge-info capitalize">
                       {order.status}
                     </span>
+                  </td>
+                  <td>
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-error"
+                        onClick={() => handleDeleteOrder(order)}
+                        disabled={isDeleting}
+                        title="Delete order"
+                      >
+                        {isDeleting ? (
+                          <span className="loading loading-spinner loading-xs"></span>
+                        ) : (
+                          "Delete"
+                        )}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

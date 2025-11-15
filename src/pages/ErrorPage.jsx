@@ -8,10 +8,10 @@ const ErrorPage = () => {
             src="https://i.ibb.co.com/0p7N5vsY/App-Error.png"
             alt="Error 404"
           />
-          <h1 className="text-5xl font-bold text-center">
+          <h1 className="text-5xl font-bold text-center text-base-content">
             Oops, page not found!
           </h1>
-          <p className="text-[#627382]">
+          <p className="text-base-content/70">
             The page you are looking for is not available.
           </p>
           <Link

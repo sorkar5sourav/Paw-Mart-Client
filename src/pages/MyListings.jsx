@@ -186,7 +186,7 @@ const MyListings = () => {
     return (
       <MyContainer className="flex-1 flex-col justify-center items-center flex min-h-screen">
         <RingLoader color="#357fa7" size={60} />
-        <p className="mt-4 text-gray-600">Loading your listings...</p>
+        <p className="mt-4 text-base-content/70">Loading your listings...</p>
       </MyContainer>
     );
   }
@@ -199,24 +199,24 @@ const MyListings = () => {
     <MyContainer className="flex-1 py-8 px-4 min-h-screen">
       <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">My Listings</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-base-content">My Listings</h1>
+          <p className="text-base-content/70">
             Manage your pets and products. Only you can see and edit these
             listings.
           </p>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-base-content/60">
           Total Listings:{" "}
-          <span className="font-semibold text-gray-700">{listings.length}</span>
+          <span className="font-semibold text-base-content">{listings.length}</span>
         </div>
       </div>
 
       {listings.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+        <div className="bg-base-100 shadow rounded-lg p-8 text-center transition-colors duration-300">
+          <h2 className="text-xl font-semibold text-base-content mb-2">
             No listings yet
           </h2>
-          <p className="text-gray-500 mb-4">
+          <p className="text-base-content/70 mb-4">
             Create a listing to see it appear here and manage it later.
           </p>
           <button
@@ -227,10 +227,10 @@ const MyListings = () => {
           </button>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white shadow rounded-lg">
+        <div className="overflow-x-auto bg-base-100 shadow rounded-lg transition-colors duration-300">
           <table className="table w-full">
             <thead>
-              <tr className="bg-gray-100 text-gray-700">
+              <tr className="bg-base-200 text-base-content">
                 <th>Name</th>
                 <th>Category</th>
                 <th>Price</th>
@@ -245,10 +245,10 @@ const MyListings = () => {
                 <tr key={listing._id} className="hover">
                   <td>
                     <div>
-                      <p className="font-semibold text-gray-800">
+                      <p className="font-semibold text-base-content">
                         {listing.name}
                       </p>
-                      <p className="text-xs text-gray-500 truncate max-w-xs">
+                      <p className="text-xs text-base-content/60 truncate max-w-xs">
                         {listing.description}
                       </p>
                     </div>

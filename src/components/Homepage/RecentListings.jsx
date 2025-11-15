@@ -3,26 +3,39 @@ import { Link } from "react-router";
 
 const RecentListings = ({ listings = [] }) => {
   const recentListings = useMemo(() => {
+    // Backend already sorts by _id descending, but we'll ensure proper sorting here too
+    // MongoDB ObjectId strings maintain chronological order when compared lexicographically
     const sorted = [...listings].sort((a, b) => {
-      const dateA = new Date(a.createdAt || a.updatedAt || 0).getTime();
-      const dateB = new Date(b.createdAt || b.updatedAt || 0).getTime();
-      return dateB - dateA;
+      // Primary: Sort by _id (ObjectId contains timestamp, newer = greater)
+      if (a._id && b._id) {
+        // Compare ObjectId strings (they maintain chronological order)
+        if (a._id > b._id) return -1;
+        if (a._id < b._id) return 1;
+      }
+      // Fallback: Use createdAt/updatedAt if available
+      if (a.createdAt || a.updatedAt || b.createdAt || b.updatedAt) {
+        const dateA = new Date(a.createdAt || a.updatedAt || 0).getTime();
+        const dateB = new Date(b.createdAt || b.updatedAt || 0).getTime();
+        return dateB - dateA;
+      }
+      return 0;
     });
+    // Return the 6 most recent listings
     return sorted.slice(0, 6);
   }, [listings]);
 
   if (recentListings.length === 0) {
     return (
-      <section className="w-full rounded-2xl border border-dashed border-slate-300 bg-white py-12 text-center shadow-sm">
-        <h2 className="text-2xl font-semibold text-slate-800">
+      <section className="w-full rounded-2xl border border-dashed border-base-300 bg-base-100 py-12 text-center shadow-sm transition-colors duration-300">
+        <h2 className="text-2xl font-semibold text-base-content">
           Recent Listings
         </h2>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-base-content/70">
           New listings will appear here once available.
         </p>
         <Link
           to="/pets-supply"
-          className="btn btn-ghost mt-6 border border-emerald-300 bg-white text-emerald-600 hover:bg-emerald-500 hover:text-white"
+          className="btn btn-ghost mt-6 border border-primary bg-base-100 text-primary hover:bg-primary hover:text-primary-content transition-colors duration-300"
         >
           Browse All Listings
         </Link>
@@ -75,9 +88,9 @@ const RecentListings = ({ listings = [] }) => {
           return (
             <article
               key={_id}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg"
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow transition hover:-translate-y-1 hover:shadow-lg transition-colors duration-300"
             >
-              <div className="relative h-52 w-full overflow-hidden bg-slate-100">
+              <div className="relative h-52 w-full overflow-hidden bg-base-200">
                 {listingImage ? (
                   <img
                     src={listingImage}
@@ -89,29 +102,29 @@ const RecentListings = ({ listings = [] }) => {
                     }}
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-slate-400">
+                  <div className="flex h-full items-center justify-center text-base-content/40">
                     No image
                   </div>
                 )}
-                <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-600 shadow">
+                <span className="absolute left-4 top-4 rounded-full bg-base-100/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary shadow">
                   {category || "Uncategorized"}
                 </span>
               </div>
 
               <div className="flex flex-1 flex-col gap-3 p-6">
-                <h3 className="text-lg font-semibold text-slate-900 line-clamp-2">
+                <h3 className="text-lg font-semibold text-base-content line-clamp-2">
                   {name || "Untitled Listing"}
                 </h3>
-                <p className="text-sm font-medium text-emerald-600">
+                <p className="text-sm font-medium text-primary">
                   {displayPrice}
                 </p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-base-content/70">
                   {location || "Location not specified"}
                 </p>
                 <div className="mt-auto">
                   <Link
                     to={`/listing-details/${_id}`}
-                    className="btn btn-sm w-full bg-emerald-500 font-semibold text-white transition hover:bg-emerald-600"
+                    className="btn btn-sm w-full btn-primary font-semibold transition-colors duration-300"
                   >
                     See Details
                   </Link>

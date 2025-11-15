@@ -31,7 +31,7 @@ const ListingCard = ({ listing }) => {
         </div>
 
         {/* Location */}
-        <div className="flex items-center text-gray-600 text-sm mb-2">
+        <div className="flex items-center text-base-content/70 text-sm mb-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-4 w-4 mr-1"

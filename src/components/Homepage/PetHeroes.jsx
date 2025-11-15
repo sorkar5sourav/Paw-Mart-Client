@@ -7,7 +7,7 @@ const heroes = [
     story:
       "Maya has fostered over 18 senior dogs, helping them regain trust and find retirement homes filled with comfort.",
     image:
-      "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=400&q=80",
+      "https://www.lawnstarter.com/blog/wp-content/uploads/2023/08/pexels-blue-bird-7210705new-1.png",
   },
   {
     name: "Aarav Chatterjee",
@@ -15,7 +15,7 @@ const heroes = [
     story:
       "After adopting Luna from PawMart, Aarav now volunteers every weekend to match families with their perfect pet.",
     image:
-      "https://images.unsplash.com/photo-1508672019048-805c876b67e2?auto=format&fit=crop&w=400&q=80",
+      "https://res.cloudinary.com/jerrick/image/upload/v1688440973/64a3908de5d820001c22beeb.jpg",
   },
   {
     name: "Selina Gomes",
@@ -23,7 +23,7 @@ const heroes = [
     story:
       "Selina offers free wellness checks for newly adopted pets, ensuring every furry friend gets a healthy start.",
     image:
-      "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=400&q=80",
+      "https://media.istockphoto.com/id/1410010187/video/woman-with-exotic-pets.jpg?s=640x640&k=20&c=EB4YGb6whg989X_hL5JDVC5vjEcWEWpuGFx4cvhXDcI=",
   },
   {
     name: "Hassan & Leila",
@@ -31,7 +31,7 @@ const heroes = [
     story:
       "This husband-and-wife duo leads our rescue drives, transporting animals from remote shelters to PawMart foster homes.",
     image:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80",
+      "https://cdn.prod.website-files.com/661d3eb71206816721de681d/661d3eb71206816721de82aa_PetLovers.webp",
   },
 ];
 
@@ -89,7 +89,7 @@ const PetHeroes = () => {
         {heroes.map(({ name, role, story, image }) => (
           <MotionArticle
             key={name}
-            className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg"
+            className="flex h-full flex-col overflow-hidden rounded-3xl border border-base-300 bg-base-100 shadow transition hover:-translate-y-1 hover:shadow-lg transition-colors duration-300"
             variants={cardVariants}
           >
             <div className="relative h-56 w-full overflow-hidden">
@@ -99,13 +99,13 @@ const PetHeroes = () => {
                 className="h-full w-full object-cover transition duration-300 hover:scale-105"
                 loading="lazy"
               />
-              <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-600 shadow">
+              <span className="absolute bottom-4 left-4 rounded-full bg-base-100/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary shadow">
                 {role}
               </span>
             </div>
             <div className="flex flex-1 flex-col gap-3 p-6">
-              <h3 className="text-lg font-semibold text-slate-900">{name}</h3>
-              <p className="text-sm text-slate-600">{story}</p>
+              <h3 className="text-lg font-semibold text-base-content">{name}</h3>
+              <p className="text-sm text-base-content/70">{story}</p>
             </div>
           </MotionArticle>
         ))}

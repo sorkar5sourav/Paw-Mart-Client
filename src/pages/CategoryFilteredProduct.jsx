@@ -62,20 +62,20 @@ const CategoryFilteredProduct = () => {
         </div>
       </div>
       <div className="text-center">
-        <h1 className="mt-2 text-4xl font-bold text-gray-800">
+        <h1 className="mt-2 text-4xl font-bold text-base-content">
           {sectionTitle}
         </h1>
-        <p className="mt-3 text-sm text-gray-600 md:text-base">
+        <p className="mt-3 text-sm text-base-content/70 md:text-base">
           Browse all available listings curated for this category.
         </p>
       </div>
 
       {listings.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white py-16 text-center">
-          <h2 className="text-xl font-semibold text-gray-700">
+        <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-base-300 bg-base-100 py-16 text-center transition-colors duration-300">
+          <h2 className="text-xl font-semibold text-base-content">
             No listings found
           </h2>
-          <p className="mt-2 max-w-md text-sm text-gray-500">
+          <p className="mt-2 max-w-md text-sm text-base-content/70">
             Check back soon or explore other categories for more options.
           </p>
         </div>
