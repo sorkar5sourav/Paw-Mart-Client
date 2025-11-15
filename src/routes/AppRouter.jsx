@@ -11,6 +11,7 @@ import MyListings from "../pages/MyListings";
 import MyOrders from "../pages/MyOrders";
 import ErrorPage from "../pages/ErrorPage";
 import API_BASE_URL from "../config/apiBaseUrl";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +38,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/listing",
-        element: <ListingForm />,
+        element: (
+          <PrivateRoute>
+            <ListingForm />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/pets-supply",
@@ -51,15 +56,27 @@ const router = createBrowserRouter([
       },
       {
         path: "/my-listings",
-        element: <MyListings />,
+        element: (
+          <PrivateRoute>
+            <MyListings />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/my-orders",
-        element: <MyOrders />,
+        element: (
+          <PrivateRoute>
+            <MyOrders />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/listing-details/:id",
-        element: <ListingDetails />,
+        element: (
+          <PrivateRoute>
+            <ListingDetails />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/category-filtered-product/:categoryName",
