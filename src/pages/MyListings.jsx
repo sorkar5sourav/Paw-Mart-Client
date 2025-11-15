@@ -6,6 +6,7 @@ import MyContainer from "../components/MyContainer";
 import { AuthContext } from "../context/AuthContext";
 import EditListingModal from "../components/ListingPage/EditListingModal";
 import API_BASE_URL from "../config/apiBaseUrl";
+import { getAuthToken } from "../utils/getAuthToken";
 
 const MyListings = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -19,15 +20,25 @@ const MyListings = () => {
   const userId = user?.uid || user?.userId || user?.id || "";
 
   const loadUserListings = useCallback(async () => {
-    if (!userId) {
+    if (!userId || !user) {
       setListings([]);
       setLoading(false);
       return;
     }
     try {
       setLoading(true);
+      const token = await getAuthToken(user);
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
       const response = await fetch(
-        `${API_BASE_URL}/user-listings?userId=${encodeURIComponent(userId)}`
+        `${API_BASE_URL}/user-listings?userId=${encodeURIComponent(userId)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -45,7 +56,7 @@ const MyListings = () => {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, user]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -78,12 +89,20 @@ const MyListings = () => {
 
     try {
       setIsFetching(true);
+      const token = await getAuthToken(user);
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
       const response = await fetch(
         `${API_BASE_URL}/listings/${listing._id}?userId=${encodeURIComponent(
           userId
         )}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       if (!response.ok) {
@@ -108,12 +127,18 @@ const MyListings = () => {
 
     try {
       setIsFetching(true);
+      const token = await getAuthToken(user);
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
       const response = await fetch(
         `${API_BASE_URL}/listings/${selectedListing._id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             ...updatedData,

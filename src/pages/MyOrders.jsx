@@ -8,6 +8,7 @@ import autoTable from "jspdf-autotable";
 import MyContainer from "../components/MyContainer";
 import { AuthContext } from "../context/AuthContext";
 import API_BASE_URL from "../config/apiBaseUrl";
+import { getAuthToken } from "../utils/getAuthToken";
 
 const formatPrice = (price) => {
   if (price === 0 || price === "0") {
@@ -122,31 +123,42 @@ const MyOrders = () => {
   const email = user?.email || "";
 
   const loadOrders = useCallback(async () => {
-    if (!email) {
+    if (!email || !user) {
       setOrders([]);
       setLoading(false);
       return;
     }
 
-    setLoading(true);
-    fetch(`${API_BASE_URL}/orders?email=${encodeURIComponent(email)}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Failed to load orders (status ${res.status})`);
+    try {
+      setLoading(true);
+      const token = await getAuthToken(user);
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/orders?email=${encodeURIComponent(email)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setOrders(Array.isArray(data) ? data : data?.orders || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error loading orders:", error);
-        toast.error(error.message || "Failed to load your orders");
-        setLoading(false);
-      });
-  }, [email]);
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to load orders (status ${response.status})`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setOrders(Array.isArray(data) ? data : data?.orders || []);
+    } catch (error) {
+      console.error("Error loading orders:", error);
+      toast.error(error.message || "Failed to load your orders");
+    } finally {
+      setLoading(false);
+    }
+  }, [email, user]);
 
   useEffect(() => {
     if (authLoading) return;

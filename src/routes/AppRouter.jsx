@@ -37,7 +37,7 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        path: "/listing",
+        path: "/add-listing",
         element: (
           <PrivateRoute>
             <ListingForm />

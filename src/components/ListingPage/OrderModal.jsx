@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import API_BASE_URL from "../../config/apiBaseUrl";
+import { getAuthToken } from "../../utils/getAuthToken";
 
 const formatPrice = (price) => {
   if (price === 0 || price === "0") {
@@ -61,10 +62,18 @@ const OrderModal = ({ listing, user, isOpen, onClose }) => {
 
     try {
       setIsSubmitting(true);
+      const token = await getAuthToken(user);
+      if (!token) {
+        toast.error("Failed to get authentication token. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const response = await fetch(`${API_BASE_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(orderData),
       });

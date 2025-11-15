@@ -6,6 +6,7 @@ import { RingLoader } from "react-spinners";
 import { AuthContext } from "../context/AuthContext";
 import OrderModal from "../components/ListingPage/OrderModal";
 import API_BASE_URL from "../config/apiBaseUrl";
+import { getAuthToken } from "../utils/getAuthToken";
 
 const ListingDetails = () => {
   const { id } = useParams();
@@ -22,7 +23,21 @@ const ListingDetails = () => {
       if (!id) {
         throw new Error("No listing ID provided");
       }
-      const response = await fetch(`${API_BASE_URL}/listing/${id}`);
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      const token = await getAuthToken(user);
+      if (!token) {
+        throw new Error("Failed to get authentication token");
+      }
+
+      const response = await fetch(`${API_BASE_URL}/listing/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
@@ -42,7 +57,7 @@ const ListingDetails = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, navigate]);
+  }, [id, navigate, user]);
 
   useEffect(() => {
     fetchListingDetails();

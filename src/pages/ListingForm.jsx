@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-hot-toast";
 import MyContainer from "../components/MyContainer";
 import API_BASE_URL from "../config/apiBaseUrl";
+import { getAuthToken } from "../utils/getAuthToken";
 
 const ListingForm = () => {
   const { user } = useContext(AuthContext);
@@ -74,10 +75,18 @@ const ListingForm = () => {
         userName: user.displayName || "Anonymous",
       };
 
+      const token = await getAuthToken(user);
+      if (!token) {
+        toast.error("Failed to get authentication token. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const response = await fetch(`${API_BASE_URL}/listings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(listingData),
       });

@@ -57,7 +57,7 @@ const Navbar = () => {
               {user && (
                 <>
                   <li>
-                    <MyLink to={"/listing"}>Add Listing</MyLink>
+                    <MyLink to={"/add-listing"}>Add Listing</MyLink>
                   </li>
                   <li>
                     <MyLink to={"/my-listings"}>My Listings</MyLink>
@@ -88,7 +88,7 @@ const Navbar = () => {
           </MyLink>
           {user && (
             <>
-              <MyLink to={"/listing"} className={"text-black"}>
+              <MyLink to={"/add-listing"} className={"text-black"}>
                 Add Listing
               </MyLink>
               <MyLink to={"/my-listings"} className={"text-black"}>
