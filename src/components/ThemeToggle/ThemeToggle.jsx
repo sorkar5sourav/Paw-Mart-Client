@@ -19,7 +19,7 @@ const ThemeToggle = () => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "synthwave" : "light"));
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (
@@ -28,7 +28,7 @@ const ThemeToggle = () => {
         type="checkbox"
         onChange={toggleTheme}
         className="theme-controller"
-        checked={theme === "synthwave"}
+        checked={theme === "dark"}
         aria-label="Toggle theme"
       />
       <svg

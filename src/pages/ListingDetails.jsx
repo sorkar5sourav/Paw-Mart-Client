@@ -15,6 +15,8 @@ const ListingDetails = () => {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [mainImage, setMainImage] = useState(null);
+  const [related, setRelated] = useState([]);
 
   const fetchListingDetails = useCallback(
     async (abortSignal) => {
@@ -24,19 +26,15 @@ const ListingDetails = () => {
           throw new Error("No listing ID provided");
         }
 
-        if (!user) {
-          throw new Error("User not authenticated");
-        }
-
-        const token = await getAuthToken(user);
-        if (!token) {
-          throw new Error("Failed to get authentication token");
+        // include auth token if available, but allow public access
+        const headers = {};
+        if (user) {
+          const token = await getAuthToken(user).catch(() => null);
+          if (token) headers.Authorization = `Bearer ${token}`;
         }
 
         const response = await fetch(`${API_BASE_URL}/listing/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
           signal: abortSignal,
         });
         if (!response.ok) {
@@ -48,7 +46,22 @@ const ListingDetails = () => {
         }
         const data = await response.json();
         if (!abortSignal.aborted) {
-          setListing(data.result || data);
+          const resolved = data.result || data;
+          setListing(resolved);
+          setMainImage(
+            resolved.images?.[0] || resolved.image || resolved.imageUrl || null
+          );
+          // fetch related items (best-effort)
+          if (resolved.category) {
+            fetch(
+              `${API_BASE_URL}/listings?category=${encodeURIComponent(
+                resolved.category
+              )}&limit=4`
+            )
+              .then((r) => r.json())
+              .then((d) => setRelated((d && d.result) || d || []))
+              .catch(() => {});
+          }
         }
       } catch (error) {
         if (error.name === "AbortError") {
@@ -131,26 +144,50 @@ const ListingDetails = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* Image Section */}
-        <div className="bg-base-200 h-full flex justify-center items-center rounded-lg transition-colors duration-300">
-          <img
-            src={listing.image || listing.imageUrl}
-            alt={listing.name}
-            className="rounded-lg max-h-140 w-auto"
-            onError={(e) => {
-              e.target.src =
-                "https://i.pinimg.com/736x/44/b2/11/44b211e4d40b1b835da33b55fdf9fd13.jpg";
-            }}
-          />
+        {/* Image Gallery Section */}
+        <div className="bg-base-200 h-full rounded-lg transition-colors duration-300 p-4">
+          <div
+            className="rounded-lg overflow-hidden mb-4 flex items-center justify-center"
+            style={{ minHeight: 320 }}
+          >
+            {mainImage ? (
+              <img
+                src={mainImage}
+                alt={listing.name}
+                className="max-h-[420px] w-auto object-contain"
+                onError={(e) => (e.target.style.display = "none")}
+              />
+            ) : (
+              <div className="h-48 w-full bg-slate-200" />
+            )}
+          </div>
+
+          {Array.isArray(listing.images) && listing.images.length > 0 && (
+            <div className="flex gap-3 overflow-x-auto">
+              {listing.images.map((src, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setMainImage(src)}
+                  className="flex-none rounded overflow-hidden"
+                >
+                  <img
+                    src={src}
+                    alt={`thumb-${idx}`}
+                    className="h-20 w-32 object-cover"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Details Section */}
         <div>
           <div className="space-y-6">
-            {/* Title and Category */}
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-4xl font-bold text-base-content">
+                <h1 className="text-3xl md:text-4xl font-bold text-base-content">
                   {listing.name}
                 </h1>
                 <span className="badge badge-primary badge-lg">
@@ -159,9 +196,8 @@ const ListingDetails = () => {
               </div>
             </div>
 
-            {/* Price */}
             <div className="border-b pb-4">
-              <span className="text-4xl font-bold text-[#357fa7]">
+              <span className="text-3xl md:text-4xl font-bold text-[var(--color-primary)]">
                 {formatPrice(listing.Price || listing.price)}
               </span>
               {listing.category === "Pets" && (
@@ -171,112 +207,86 @@ const ListingDetails = () => {
               )}
             </div>
 
-            {/* Location */}
-            <div className="flex items-center text-base-content">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              <span className="text-lg">{listing.location}</span>
+            <div className="flex items-center text-base-content justify-between">
+              <div className="flex items-center gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <span className="text-lg">{listing.location}</span>
+              </div>
+              <div className="text-sm text-muted">
+                Posted: {formatDate(listing.createdAt || listing.date)}
+              </div>
             </div>
 
-            {/* Pickup Date */}
-            <div className="flex items-center text-base-content">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              <span className="text-lg">
-                Pickup Date: {formatDate(listing.date || listing.pickupDate)}
-              </span>
-            </div>
-
-            {/* Description */}
             <div className="border-t border-gray-200 pt-4">
               <h2 className="text-2xl font-semibold mb-3 text-base-content">
-                Description
+                Overview
               </h2>
               <p className="text-base-content/80 leading-relaxed whitespace-pre-wrap">
                 {listing.description}
               </p>
             </div>
 
-            {/* Contact Information */}
-            <div className="border-t border-gray-300 pt-4">
-              <h2 className="text-2xl font-semibold mb-3 text-base-content">
-                Contact Information
-              </h2>
-              <div className="space-y-2">
-                <div className="flex items-center text-base-content">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-                    />
-                  </svg>
-                  <span>{listing.email}</span>
-                </div>
-                {listing.userName && (
-                  <div className="flex items-center text-base-content">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    <span>Listed by: {listing.userName}</span>
-                  </div>
-                )}
+            {/* Specs */}
+            {listing.specs && (
+              <div className="border-t border-gray-200 pt-4">
+                <h3 className="text-lg font-semibold mb-2">Specifications</h3>
+                <ul className="list-disc pl-5 text-sm text-base-content/80">
+                  {Object.entries(listing.specs).map(([k, v]) => (
+                    <li key={k}>
+                      <strong>{k}:</strong> {String(v)}
+                    </li>
+                  ))}
+                </ul>
               </div>
+            )}
+
+            {/* Reviews */}
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="text-lg font-semibold mb-3">Reviews</h3>
+              {Array.isArray(listing.reviews) && listing.reviews.length > 0 ? (
+                <div className="space-y-3">
+                  {listing.reviews.map((r, i) => (
+                    <div key={i} className="p-3 bg-base-100 rounded">
+                      <div className="flex items-center justify-between">
+                        <strong>{r.author || "Anonymous"}</strong>
+                        <span className="text-sm">
+                          {r.rating ? `⭐ ${r.rating}` : null}
+                        </span>
+                      </div>
+                      <p className="text-sm text-base-content/80 mt-1">
+                        {r.comment}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted">No reviews yet.</p>
+              )}
             </div>
 
-            {/* Action Buttons */}
             <div className="flex flex-wrap gap-4 pt-4">
               <button
                 type="button"
-                className="btn btn-secondary flex-1 min-w-40"
+                className="btn btn-primary flex-1 min-w-40"
                 onClick={() => {
                   if (!user) {
                     toast.error("Please login to place an order.");
@@ -288,13 +298,47 @@ const ListingDetails = () => {
               >
                 Adopt / Order Now
               </button>
-              <Link to="/pets-supply" className="btn btn-outline min-w-40">
-                Browse More
-              </Link>
+              <button
+                className="btn btn-outline"
+                onClick={() =>
+                  navigator.share
+                    ? navigator.share({
+                        title: listing.name,
+                        text: listing.description,
+                        url: window.location.href,
+                      })
+                    : toast("Share not supported in this browser")
+                }
+              >
+                Share
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Related items */}
+      {related && related.length > 0 && (
+        <section className="mt-12">
+          <h3 className="text-2xl font-bold mb-4">Related Listings</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {related
+              .filter((r) => r._id !== listing._id)
+              .map((r) => (
+                <div key={r._id} className="card p-3">
+                  <Link to={`/listing-details/${r._id}`} className="block">
+                    <img
+                      src={r.image || r.imageUrl}
+                      alt={r.name}
+                      className="h-32 w-full object-cover mb-2"
+                    />
+                    <div className="font-semibold">{r.name}</div>
+                  </Link>
+                </div>
+              ))}
+          </div>
+        </section>
+      )}
 
       <OrderModal
         listing={listing}

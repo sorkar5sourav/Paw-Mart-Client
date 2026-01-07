@@ -3,14 +3,14 @@ import { useNavigate } from "react-router";
 import { toast } from "react-hot-toast";
 import { RingLoader } from "react-spinners";
 import { FiDownload } from "react-icons/fi";
-import MyContainer from "../components/MyContainer";
-import { AuthContext } from "../context/AuthContext";
-import API_BASE_URL from "../config/apiBaseUrl";
-import { getAuthToken } from "../utils/getAuthToken";
+import MyContainer from "../../components/MyContainer";
+import { AuthContext } from "../../context/AuthContext";
+import API_BASE_URL from "../../config/apiBaseUrl";
+import { getAuthToken } from "../../utils/getAuthToken";
 import {
   downloadOrdersReport,
   formatPrice,
-} from "../utils/downloadOrdersReport";
+} from "../../utils/downloadOrdersReport";
 
 const MyOrders = () => {
   const { user, loading: authLoading } = useContext(AuthContext);

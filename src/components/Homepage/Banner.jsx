@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "swiper/css/navigation";
 import { Typewriter } from "react-simple-typewriter";
 
 const slides = [
@@ -47,54 +48,82 @@ const MotionA = motion.a;
 
 const Banner = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef(null);
   const currentSlide = slides[activeIndex];
 
+  const scrollToSections = () => {
+    const el = document.getElementById("homepage-sections");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <section className="w-full">
+    <section className="w-full" role="region" aria-label="Hero carousel">
       <div className="relative overflow-hidden rounded-3xl shadow-lg">
         <Swiper
           slidesPerView={1}
           spaceBetween={24}
           loop
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
-          modules={[Autoplay]}
+          autoplay={{ delay: 4500, disableOnInteraction: false }}
+          modules={[Autoplay, Navigation]}
+          onSwiper={(s) => (swiperRef.current = s)}
           onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-          className="h-[340px] md:h-[460px]"
+          className="h-[60vh] md:h-[70vh]"
+          navigation={{
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          }}
         >
-          {slides.map(({ image, alt, tagline }) => (
+          {slides.map(({ image, alt, tagline, description }) => (
             <SwiperSlide key={tagline}>
-              <img
-                src={image}
-                alt={alt}
-                className="h-full w-full object-cover"
-              />
+              <div className="h-full w-full relative">
+                <img
+                  src={image}
+                  alt={alt}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/20" />
+              </div>
             </SwiperSlide>
           ))}
+
+          {/* Prev/Next buttons (styled) */}
+          <button
+            aria-label="Previous slide"
+            className="swiper-button-prev absolute left-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/60"
+          >
+            ‹
+          </button>
+          <button
+            aria-label="Next slide"
+            className="swiper-button-next absolute right-4 top-1/2 z-30 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/60"
+          >
+            ›
+          </button>
         </Swiper>
 
-        <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-r from-black/70 via-black/40 to-black/10" />
-
         <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-center gap-4 px-6 text-white md:px-14">
-          <span className="pointer-events-auto inline-flex w-fit items-center rounded-full bg-base-100/20 backdrop-blur-sm px-4 py-1 text-xs font-semibold uppercase tracking-widest md:text-sm">
+          <span className="pointer-events-auto inline-flex w-fit items-center rounded-full bg-white/10 backdrop-blur-sm px-4 py-1 text-xs font-semibold uppercase tracking-widest md:text-sm">
             PawMart Adoption Center
           </span>
           <AnimatePresence mode="wait">
-            <MotionH2
-              key={`headline-${activeIndex}`}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -24 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              className="pointer-events-none text-3xl font-bold leading-snug md:text-5xl lg:text-6xl"
-            >
-              <Typewriter
-                key={activeIndex}
-                words={[currentSlide.tagline]}
-                cursor={false}
-                typeSpeed={55}
-                deleteSpeed={25}
-              />
-            </MotionH2>
+            <div aria-live="polite" aria-atomic="true">
+              <MotionH2
+                key={`headline-${activeIndex}`}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -24 }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                className="pointer-events-none text-3xl font-bold leading-snug md:text-5xl lg:text-6xl"
+              >
+                <Typewriter
+                  key={activeIndex}
+                  words={[currentSlide.tagline]}
+                  cursor={false}
+                  typeSpeed={55}
+                  deleteSpeed={25}
+                />
+              </MotionH2>
+            </div>
           </AnimatePresence>
           <AnimatePresence mode="wait">
             <MotionP
@@ -118,7 +147,11 @@ const Banner = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               href="/pets-supply"
-              className="btn bg-emerald-500 font-semibold text-white transition hover:bg-emerald-600"
+              className="btn"
+              style={{
+                backgroundColor: "var(--color-primary)",
+                color: "white",
+              }}
             >
               Explore Adoptions
             </MotionA>
@@ -126,11 +159,20 @@ const Banner = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               href="/pets-supply?category=Pets"
-              className="btn btn-outline border-white text-white hover:border-emerald-300 hover:bg-emerald-500 hover:text-white"
+              className="btn btn-outline border-white text-white"
             >
               View Pets
             </MotionA>
           </MotionDiv>
+
+          {/* next-section hint */}
+          <button
+            aria-label="Scroll to next section"
+            onClick={scrollToSections}
+            className="pointer-events-auto absolute bottom-6 left-1/2 z-30 -translate-x-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur hover:bg-white/30"
+          >
+            ↓
+          </button>
         </div>
       </div>
     </section>

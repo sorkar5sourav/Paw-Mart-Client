@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLoaderData, useSearchParams } from "react-router";
 import MyContainer from "../components/MyContainer";
 import ListingCard from "../components/ListingPage/ListingCard";
+import SkeletonCard from "../components/ListingPage/SkeletonCard";
 
 const PetsSupply = () => {
   const listingsData = useLoaderData();
@@ -107,7 +108,15 @@ const PetsSupply = () => {
       </div>
 
       {/* Listings Grid */}
-      {filteredListings.length === 0 ? (
+      {listings.length === 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i}>
+              <SkeletonCard />
+            </div>
+          ))}
+        </div>
+      ) : filteredListings.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-base-content/80 text-lg">No listings found</p>
           <p className="text-base-content/60 mt-2">
@@ -115,7 +124,7 @@ const PetsSupply = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredListings.map((listing) => (
             <ListingCard key={listing._id} listing={listing} />
           ))}

@@ -2,11 +2,11 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-hot-toast";
 import { RingLoader } from "react-spinners";
-import MyContainer from "../components/MyContainer";
-import { AuthContext } from "../context/AuthContext";
-import EditListingModal from "../components/ListingPage/EditListingModal";
-import API_BASE_URL from "../config/apiBaseUrl";
-import { getAuthToken } from "../utils/getAuthToken";
+import MyContainer from "../../components/MyContainer";
+import { AuthContext } from "../../context/AuthContext";
+import EditListingModal from "../../components/ListingPage/EditListingModal";
+import API_BASE_URL from "../../config/apiBaseUrl";
+import { getAuthToken } from "../../utils/getAuthToken";
 
 const MyListings = () => {
   const { user, loading: authLoading } = useContext(AuthContext);

@@ -45,8 +45,15 @@ const MainLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-base-100 transition-colors duration-300">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <Navbar />
-      <Outlet />
+      <main id="main-content" className="flex-1 py-8">
+        <div className="container">
+          <Outlet />
+        </div>
+      </main>
       <Footer />
     </div>
   );

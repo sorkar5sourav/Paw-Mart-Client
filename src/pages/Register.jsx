@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
 import MyContainer from "../components/MyContainer";
+import { RingLoader } from "react-spinners";
 
 const Register = () => {
   const [show, setShow] = useState(false);
@@ -34,6 +35,7 @@ const Register = () => {
       return;
     }
 
+    setLoading(true);
     createUserWithEmailAndPasswordFunc(email, password)
       .then((res) => {
         updateProfileFunc(displayName, photoURL)
@@ -44,6 +46,7 @@ const Register = () => {
             navigate(from);
           })
           .catch((e) => {
+            setLoading(false);
             toast.error(e.message);
           });
       })
@@ -71,6 +74,7 @@ const Register = () => {
         } else {
           toast.error(e.message || "An unexpected error occurred.");
         }
+        setLoading(false);
       });
   };
   return (

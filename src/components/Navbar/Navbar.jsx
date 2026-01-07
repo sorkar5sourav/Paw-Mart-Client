@@ -4,8 +4,8 @@ import { RingLoader } from "react-spinners";
 import { Link, NavLink } from "react-router";
 import MyContainer from "../MyContainer";
 import { toast } from "react-hot-toast";
-import { useContext } from "react";
-import ThemeToggle from "./ThemeToggle";
+import { useContext, useState, useEffect, useRef } from "react";
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const Navbar = () => {
   const { user, signoutUserFunc, setUser, loading } = useContext(AuthContext);
@@ -19,12 +19,53 @@ const Navbar = () => {
         toast.error(e.message);
       });
   };
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const mobileMenuRef = useRef(null);
+  const profileMenuRef = useRef(null);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+        setProfileOpen(false);
+      }
+    };
+    const onClick = (e) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) {
+        setMobileOpen(false);
+      }
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(e.target)
+      ) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("click", onClick);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("click", onClick);
+    };
+  }, []);
   return (
-    <div className="bg-base-200 shadow-sm w-full transition-colors duration-300">
+    <div className="sticky top-0 z-50 bg-base-200 shadow-sm w-full transition-colors duration-300">
       <MyContainer className=" navbar p-4">
         <div className="navbar-start">
-          <div className="dropdown dropdown-hover dropdown-start">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+          <div
+            ref={mobileMenuRef}
+            className={`dropdown dropdown-start ${
+              mobileOpen ? "dropdown-open" : ""
+            }`}
+          >
+            <button
+              aria-controls="mobile-menu"
+              aria-expanded={mobileOpen}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMobileOpen((s) => !s)}
+              className="btn btn-ghost lg:hidden"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-7 w-7"
@@ -40,127 +81,146 @@ const Navbar = () => {
                   d="M4 6h16M4 12h8m-8 6h16"
                 />{" "}
               </svg>
-            </div>
+            </button>
             <ul
+              id="mobile-menu"
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 w-52 p-2 shadow"
             >
               <li>
-                <MyLink to={"/"}>Home</MyLink>
+                <MyLink to="/">Home</MyLink>
               </li>
               <li>
-                <MyLink to={"/pets-supply"}>Pets & Supplies</MyLink>
+                <MyLink to="/pets-supply">Pets & Supplies</MyLink>
               </li>
-              {user && (
-                <>
-                  <li>
-                    <MyLink to={"/add-listing"}>Add Listing</MyLink>
-                  </li>
-                  <li>
-                    <MyLink to={"/my-listings"}>My Listings</MyLink>
-                  </li>
-                  <li>
-                    <MyLink to={"/my-orders"}>My Orders</MyLink>
-                  </li>
-                </>
-              )}
+              <li>
+                <MyLink to="/about">About</MyLink>
+              </li>
+              <li>
+                <MyLink to="/blog">Blog</MyLink>
+              </li>
+              <li>
+                <MyLink to="/contact">Contact</MyLink>
+              </li>
             </ul>
           </div>
-          <NavLink to="/">
-            <div className="flex items-center text-xl font-bold text-emerald-600">
-              <img
-                src="https://i.ibb.co.com/KjQ1LCtV/Gemini-Generated-Image-qf5rsjqf5rsjqf5r.png"
-                className="h-10 mr-2 w-10 rounded-full"
-              />
-              PAW MART
-            </div>
+          <NavLink
+            to="/"
+            className="flex items-center text-xl font-bold"
+            aria-label="PawMart home"
+          >
+            <img
+              src="https://i.ibb.co/KjQ1LCt/logo.png"
+              className="h-10 mr-2 w-10 rounded-full object-cover"
+              alt="PawMart"
+            />
+            <span style={{ color: "var(--color-primary)" }}>PAW MART</span>
           </NavLink>
         </div>
         <div className="navbar-center menu menu-horizontal gap-10 hidden lg:flex">
-          <MyLink to={"/"} className={"text-base-content"}>
+          <MyLink to="/" className={"text-base-content"}>
             Home
           </MyLink>
-          <MyLink to={"/pets-supply"} className={"text-base-content"}>
+          <MyLink to="/pets-supply" className={"text-base-content"}>
             Pets & Supplies
           </MyLink>
-          {user && (
-            <>
-              <MyLink to={"/add-listing"} className={"text-base-content"}>
-                Add Listing
-              </MyLink>
-              <MyLink to={"/my-listings"} className={"text-base-content"}>
-                My Listings
-              </MyLink>
-              <MyLink to={"/my-orders"} className={"text-base-content"}>
-                My Orders
-              </MyLink>
-            </>
-          )}
+          <MyLink to="/about" className={"text-base-content"}>
+            About
+          </MyLink>
+          <MyLink to="/blog" className={"text-base-content"}>
+            Blog
+          </MyLink>
+          <MyLink to="/contact" className={"text-base-content"}>
+            Contact
+          </MyLink>
         </div>
         <div className="navbar-end gap-2">
           <ThemeToggle />
           {loading ? (
-            <RingLoader color="#e74c3c" />
+            <RingLoader color={"var(--color-primary)"} />
           ) : user ? (
             <div className="flex items-center gap-2">
-              <div className="dropdown dropdown-hover dropdown-center">
-                <div tabIndex={0} role="button" className="relative">
+              <div
+                ref={profileMenuRef}
+                className={`dropdown dropdown-end ${
+                  profileOpen ? "dropdown-open" : ""
+                }`}
+              >
+                <button
+                  tabIndex={0}
+                  aria-haspopup="true"
+                  aria-expanded={profileOpen}
+                  aria-label={
+                    profileOpen ? "Close profile menu" : "Open profile menu"
+                  }
+                  onClick={() => setProfileOpen((s) => !s)}
+                  className="btn btn-ghost rounded-full p-0"
+                >
                   {user?.photoURL ? (
                     <img
                       className="h-10 w-10 rounded-full hover:scale-110 transition-transform duration-200 object-cover"
                       src={user.photoURL}
                       alt={user?.displayName || user?.email || "User"}
-                      onError={(e) => {
-                        // Hide image on error and show fallback
-                        e.target.style.display = "none";
-                        const fallback = e.target.nextElementSibling;
-                        if (fallback) {
-                          fallback.classList.remove("hidden");
-                        }
-                      }}
                     />
-                  ) : null}
-                  <div
-                    className={`rounded-full bg-[#357fa7] text-white font-bold flex items-center justify-center h-10 w-10 hover:scale-110 transition-transform duration-200 ${
-                      user?.photoURL ? "hidden absolute top-0 left-0" : ""
-                    }`}
-                    style={{ fontSize: "16px" }}
-                  >
-                    {(user?.displayName || user?.email || "?")[0].toUpperCase()}
-                  </div>
-                </div>
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                      {(user?.displayName ||
+                        user?.email ||
+                        "?")[0].toUpperCase()}
+                    </div>
+                  )}
+                </button>
                 <ul
-                  tabIndex="-1"
-                  className="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
+                  tabIndex={0}
+                  className="dropdown-content menu bg-base-100 rounded-box z-50 w-56 p-2 shadow-lg"
+                  role="menu"
                 >
+                  <li className="px-2 py-1 text-sm text-muted">
+                    {user?.displayName || user?.email}
+                  </li>
                   <li>
-                    <h2 className="btn bg-base-100 border-none h-10 text-lg text-base-content">
-                      {user?.displayName || user?.email || "User"}
-                    </h2>
+                    <Link to="/dashboard" className="menu-item">
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/profile" className="menu-item">
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/settings" className="menu-item">
+                      Settings
+                    </Link>
+                  </li>
+                  {user?.role === "admin" && (
+                    <li>
+                      <Link to="/admin" className="menu-item text-error">
+                        Admin
+                      </Link>
+                    </li>
+                  )}
+                  <li>
+                    <button
+                      onClick={handleSignout}
+                      className="w-full text-left"
+                    >
+                      Sign out
+                    </button>
                   </li>
                 </ul>
               </div>
-              <button
-                onClick={handleSignout}
-                className="btn btn-outline btn-error p-3 md:px-8 hover:scale-105 transition ease-in-out rounded-lg"
-              >
-                Logout
-              </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2 btn btn-outline hover:border-primary hover:bg-primary">
-              <MyLink
-                to={"/login"}
-                className="text-base-content  hover:text-emerald-600"
-              >
+            <div className="flex items-center gap-2">
+              <MyLink to={"/login"} className="btn btn-sm">
                 Login
-              </MyLink>{" "}
-              /
+              </MyLink>
               <MyLink
                 to={"/register"}
-                className="text-base-content  hover:text-emerald-600"
+                className="btn btn-primary text-white btn-sm"
               >
-                Register
+                Sign up
               </MyLink>
             </div>
           )}

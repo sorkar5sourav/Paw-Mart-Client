@@ -5,6 +5,7 @@ import { IoEyeOff } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import MyContainer from "../components/MyContainer";
+import { RingLoader } from "react-spinners";
 
 const LogIn = () => {
   const [show, setShow] = useState(false);
@@ -16,6 +17,8 @@ const LogIn = () => {
     signInWithEmailFunc,
     setLoading,
     setUser,
+    loading,
+    demoSignIn,
   } = useContext(AuthContext);
 
   const location = useLocation();
@@ -27,16 +30,27 @@ const LogIn = () => {
     const form = e.currentTarget;
     const email = form.email?.value;
     const password = form.password?.value;
+    // Basic validation
+    if (!email || !/^[\w-.]+@[\w-]+\.[A-Za-z]{2,}$/.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    if (!password || password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
     signInWithEmailAndPasswordFunc(email, password)
       .then((res) => {
         setLoading(false);
-
         setUser(res.user);
         toast.success("Login successful");
         navigate(from);
       })
       .catch((e) => {
-        toast.error(e.message);
+        setLoading(false);
+        toast.error(e.message || "Failed to sign in");
       });
   };
 
@@ -51,6 +65,34 @@ const LogIn = () => {
       .catch((e) => {
         toast.error(e.message);
       });
+  };
+
+  const handleDemoSignin = async () => {
+    // Attempt to sign in with a demo account; if it fails, fallback to a mocked demo user
+    const demoEmail = "demo@pawmart.local";
+    const demoPass = "DemoPass123!";
+    setLoading(true);
+    try {
+      // Prefer server-backed demo token if available
+      if (demoSignIn) {
+        await demoSignIn();
+      } else {
+        await signInWithEmailAndPasswordFunc(demoEmail, demoPass);
+      }
+      // success handled by promise
+    } catch (e) {
+      // fallback: mock demo user locally
+      console.log(e);
+      setUser({
+        uid: "demo",
+        displayName: "Demo User",
+        email: demoEmail,
+        role: "demo",
+      });
+      setLoading(false);
+      toast.success("Signed in as demo user (mock)");
+      navigate(from);
+    }
   };
 
   return (
@@ -113,7 +155,13 @@ const LogIn = () => {
           </div>
 
           <button type="submit" className="btn btn-primary w-full">
-            Login
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <RingLoader size={16} /> Logging in...
+              </span>
+            ) : (
+              "Login"
+            )}
           </button>
 
           <button
@@ -127,6 +175,14 @@ const LogIn = () => {
               className="w-5 h-5"
             />
             Continue with Google
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDemoSignin}
+            className="btn btn-ghost w-full"
+          >
+            Use Demo Account
           </button>
         </form>
       </div>

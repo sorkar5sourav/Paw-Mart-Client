@@ -9,7 +9,9 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
+  signInWithCustomToken,
 } from "firebase/auth";
+import API_BASE_URL from "../config/apiBaseUrl";
 import { auth } from "../firebase/firebaseConfig";
 
 const googleProvider = new GoogleAuthProvider();
@@ -38,6 +40,27 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(auth, googleProvider);
   };
 
+  const signInWithCustomTokenFunc = (token) => {
+    setLoading(true);
+    return signInWithCustomToken(auth, token);
+  };
+
+  const demoSignIn = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/demo`, { method: "POST" });
+      const json = await res.json();
+      if (json && json.token) {
+        await signInWithCustomToken(auth, json.token);
+        return { success: true };
+      }
+      throw new Error("No demo token returned");
+    } catch (err) {
+      setLoading(false);
+      throw err;
+    }
+  };
+
   const signoutUserFunc = () => {
     setLoading(true);
     return signOut(auth);
@@ -53,6 +76,8 @@ const AuthProvider = ({ children }) => {
     createUserWithEmailAndPasswordFunc,
     signInWithEmailAndPasswordFunc,
     signInWithEmailFunc,
+    signInWithCustomTokenFunc,
+    demoSignIn,
     signoutUserFunc,
     sendPassResetEmailFunc,
     updateProfileFunc,

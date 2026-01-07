@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@import "./styles/variables.css";
 
 /* Light theme (default) */
 :root,
