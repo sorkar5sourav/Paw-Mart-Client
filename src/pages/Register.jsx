@@ -6,6 +6,8 @@ import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
 import MyContainer from "../components/MyContainer";
 import { RingLoader } from "react-spinners";
+import API_BASE_URL from "../config/apiBaseUrl";
+import { getAuthToken } from "../utils/getAuthToken";
 
 const Register = () => {
   const [show, setShow] = useState(false);
@@ -39,11 +41,43 @@ const Register = () => {
     createUserWithEmailAndPasswordFunc(email, password)
       .then((res) => {
         updateProfileFunc(displayName, photoURL)
-          .then(() => {
-            setLoading(false);
+          .then(async () => {
             setUser(res.user);
-            toast.success("Signup successful");
-            navigate(from);
+
+            // Save user to MongoDB
+            try {
+              const token = await getAuthToken(res.user);
+              if (!token) {
+                throw new Error("Failed to get authentication token");
+              }
+
+              const response = await fetch(`${API_BASE_URL}/users`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  displayName,
+                  email,
+                }),
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.warn("Failed to save user to database:", errorData);
+              }
+
+              setLoading(false);
+              toast.success("Signup successful");
+              navigate(from);
+            } catch (err) {
+              console.error("Error saving user to database:", err);
+              setLoading(false);
+              toast.warning(
+                "Signup complete but profile sync failed. Please try logging in."
+              );
+            }
           })
           .catch((e) => {
             setLoading(false);

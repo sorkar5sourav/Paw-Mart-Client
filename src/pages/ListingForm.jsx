@@ -11,6 +11,7 @@ const ListingForm = () => {
   const navigate = useNavigate();
   const [category, setCategory] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isAdmin = user?.role === "admin";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,7 +105,7 @@ const ListingForm = () => {
 
       form.reset();
       setCategory("");
-      navigate("/listings");
+      navigate("/dashboard/listings");
     } catch (error) {
       console.error("Error creating listing:", error);
       toast.error(
@@ -151,6 +152,11 @@ const ListingForm = () => {
             <div>
               <label className="block text-sm font-medium mb-1">
                 Category <span className="text-red-500">*</span>
+                {!isAdmin && (
+                  <span className="text-base-content/60 text-xs ml-2">
+                    (Admin only for products)
+                  </span>
+                )}
               </label>
               <select
                 name="category"
@@ -162,10 +168,12 @@ const ListingForm = () => {
                 <option value="" disabled>
                   Select a category
                 </option>
-                <option value="Pets">Pets</option>
-                <option value="Food">Food</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Care Products">Care Products</option>
+                <option value="Pets">Pets (Adoption)</option>
+                {isAdmin && <option value="Food">Food</option>}
+                {isAdmin && <option value="Accessories">Accessories</option>}
+                {isAdmin && (
+                  <option value="Care Products">Care Products</option>
+                )}
               </select>
             </div>
 

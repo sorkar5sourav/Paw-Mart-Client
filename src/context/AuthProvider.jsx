@@ -18,6 +18,7 @@ const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [firebaseUser, setFirebaseUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const createUserWithEmailAndPasswordFunc = (email, password) => {
@@ -73,6 +74,7 @@ const AuthProvider = ({ children }) => {
   const authInfo = {
     user,
     setUser,
+    firebaseUser,
     createUserWithEmailAndPasswordFunc,
     signInWithEmailAndPasswordFunc,
     signInWithEmailFunc,
@@ -86,8 +88,48 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currUser) => {
-      setUser(currUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currUser) => {
+      if (currUser) {
+        setFirebaseUser(currUser);
+        try {
+          // Get Firebase ID token for backend authentication
+          const token = await currUser.getIdToken();
+
+          // Fetch user profile from backend to get role and other details from MongoDB
+          const response = await fetch(`${API_BASE_URL}/user-profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const userProfile = await response.json();
+            // Merge Firebase user with MongoDB profile data
+            const enrichedUser = {
+              ...currUser,
+              role: userProfile?.role || "user",
+              ...userProfile,
+            };
+            setUser(enrichedUser);
+          } else {
+            // If backend call fails, still set user but without role
+            setUser({
+              ...currUser,
+              role: "user",
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+          // Fallback: set user without role if backend call fails
+          setUser({
+            ...currUser,
+            role: "user",
+          });
+        }
+      } else {
+        setUser(null);
+        setFirebaseUser(null);
+      }
       setLoading(false);
     });
 

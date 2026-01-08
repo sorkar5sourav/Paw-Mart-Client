@@ -14,6 +14,8 @@ const PetsSupply = () => {
     categoryFromUrl || "All"
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
 
   const categories = [
     "All",
@@ -49,6 +51,7 @@ const PetsSupply = () => {
     }
 
     setFilteredListings(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
   }, [listings, selectedCategory, searchQuery]);
 
   return (
@@ -124,11 +127,67 @@ const PetsSupply = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredListings.map((listing) => (
-            <ListingCard key={listing._id} listing={listing} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredListings
+              .slice(
+                (currentPage - 1) * ITEMS_PER_PAGE,
+                currentPage * ITEMS_PER_PAGE
+              )
+              .map((listing) => (
+                <ListingCard key={listing._id} listing={listing} />
+              ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {Math.ceil(filteredListings.length / ITEMS_PER_PAGE) > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-8">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                className="btn btn-sm"
+              >
+                Previous
+              </button>
+              <div className="flex gap-1">
+                {Array.from(
+                  {
+                    length: Math.ceil(filteredListings.length / ITEMS_PER_PAGE),
+                  },
+                  (_, i) => i + 1
+                ).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`btn btn-sm ${
+                      page === currentPage ? "btn-active" : ""
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              <button
+                disabled={
+                  currentPage ===
+                  Math.ceil(filteredListings.length / ITEMS_PER_PAGE)
+                }
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="btn btn-sm"
+              >
+                Next
+              </button>
+            </div>
+          )}
+
+          {/* Page Info */}
+          <div className="text-center text-sm text-base-content/60 mt-4">
+            Page {currentPage} of{" "}
+            {Math.ceil(filteredListings.length / ITEMS_PER_PAGE)} | Showing{" "}
+            {Math.min(currentPage * ITEMS_PER_PAGE, filteredListings.length)} of{" "}
+            {filteredListings.length} listings
+          </div>
+        </>
       )}
     </MyContainer>
   );

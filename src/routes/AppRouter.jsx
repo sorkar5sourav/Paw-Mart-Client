@@ -18,6 +18,11 @@ import DashboardHome from "../pages/dashboard/Home";
 import DashboardProfile from "../pages/dashboard/Profile";
 import DashboardList from "../pages/dashboard/List";
 import DashboardOrders from "../pages/dashboard/Orders";
+import AdminListings from "../pages/dashboard/AdminListings";
+import AdminOrders from "../pages/dashboard/AdminOrders";
+import ManageUsers from "../pages/dashboard/ManageUsers";
+import AdminReports from "../pages/dashboard/AdminReports";
+import AdminSettings from "../pages/dashboard/AdminSettings";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +89,12 @@ const router = createBrowserRouter([
           { path: "profile", element: <DashboardProfile /> },
           { path: "listings", element: <DashboardList /> },
           { path: "orders", element: <DashboardOrders /> },
+          // Admin routes
+          { path: "admin-listings", element: <AdminListings /> },
+          { path: "users", element: <ManageUsers /> },
+          { path: "admin-orders", element: <AdminOrders /> },
+          { path: "reports", element: <AdminReports /> },
+          { path: "settings", element: <AdminSettings /> },
         ],
       },
       {

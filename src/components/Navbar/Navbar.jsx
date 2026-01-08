@@ -110,7 +110,7 @@ const Navbar = () => {
             aria-label="PawMart home"
           >
             <img
-              src="https://i.ibb.co/KjQ1LCt/logo.png"
+              src="https://i.ibb.co.com/KjQ1LCtV/Gemini-Generated-Image-qf5rsjqf5rsjqf5r.png"
               className="h-10 mr-2 w-10 rounded-full object-cover"
               alt="PawMart"
             />
@@ -184,22 +184,11 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="/profile" className="menu-item">
+                    <Link to="/dashboard/profile" className="menu-item">
                       Profile
                     </Link>
                   </li>
-                  <li>
-                    <Link to="/settings" className="menu-item">
-                      Settings
-                    </Link>
-                  </li>
-                  {user?.role === "admin" && (
-                    <li>
-                      <Link to="/admin" className="menu-item text-error">
-                        Admin
-                      </Link>
-                    </li>
-                  )}
+
                   <li>
                     <button
                       onClick={handleSignout}

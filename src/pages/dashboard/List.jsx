@@ -258,7 +258,7 @@ const MyListings = () => {
           </p>
           <button
             className="btn btn-primary"
-            onClick={() => navigate("/listing")}
+            onClick={() => navigate("/add-listing")}
           >
             Create Listing
           </button>
@@ -307,8 +307,20 @@ const MyListings = () => {
                       : "N/A"}
                   </td>
                   <td>
-                    <span className="badge badge-outline badge-success">
-                      Active
+                    <span
+                      className={`badge badge-outline ${
+                        listing.status === "approved"
+                          ? "badge-success"
+                          : listing.status === "pending"
+                          ? "badge-warning"
+                          : "badge-error"
+                      }`}
+                    >
+                      {listing.status === "approved"
+                        ? "Approved"
+                        : listing.status === "pending"
+                        ? "Pending"
+                        : listing.status}
                     </span>
                   </td>
                   <td>
