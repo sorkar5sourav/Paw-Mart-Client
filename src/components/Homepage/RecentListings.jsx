@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
-
+import ListingCard from "../ListingPage/ListingCard";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 const RecentListings = ({ listings = [] }) => {
   const recentListings = useMemo(() => {
     const sorted = [...listings].sort((a, b) => {
@@ -15,9 +20,10 @@ const RecentListings = ({ listings = [] }) => {
       }
       return 0;
     });
-    return sorted.slice(0, 6);
+    return sorted.slice(0, 12);
   }, [listings]);
-
+  const minSlidesForLoop = 10; // Based on desktop slidesPerView of 5
+  const shouldLoop = recentListings.length >= minSlidesForLoop;
   if (recentListings.length === 0) {
     return (
       <section className="w-full rounded-2xl border border-dashed border-base-300 bg-base-100 py-12 text-center shadow-sm transition-colors duration-300">
@@ -39,7 +45,7 @@ const RecentListings = ({ listings = [] }) => {
 
   return (
     <section className="w-full">
-      <div className="flex flex-col gap-4 text-center md:flex-row md:items-end md:justify-between md:text-left">
+      <div className="flex flex-col gap-4 text-center mb-4 md:flex-row md:items-end md:justify-between md:text-left">
         <div>
           <p className="text-sm font-semibold uppercase tracking-widest text-emerald-500">
             Fresh Arrivals
@@ -59,75 +65,46 @@ const RecentListings = ({ listings = [] }) => {
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {recentListings.map((listing) => {
-          const {
-            _id,
-            name,
-            image,
-            imageUrl,
-            category,
-            Price,
-            price,
-            location,
-          } = listing;
-          const listingPrice = Price || price;
-          const listingImage = image || imageUrl;
-
-          const displayPrice =
-            category === "Pets" || listingPrice === 0 || listingPrice === "0"
-              ? "Free for Adoption"
-              : `BDT ${Number(listingPrice || 0).toFixed(2)}`;
-
-          return (
-            <article
-              key={_id}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow transition hover:-translate-y-1 hover:shadow-lg transition-colors duration-300"
-            >
-              <div className="relative h-52 w-full overflow-hidden bg-base-200">
-                {listingImage ? (
-                  <img
-                    src={listingImage}
-                    alt={name || "Listing image"}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                    onError={(e) => {
-                      e.target.src =
-                        "https://i.pinimg.com/736x/44/b2/11/44b211e4d40b1b835da33b55fdf9fd13.jpg";
-                    }}
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-base-content/40">
-                    No image
-                  </div>
-                )}
-                <span className="absolute left-4 top-4 rounded-full bg-base-100/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary shadow">
-                  {category || "Uncategorized"}
-                </span>
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        centeredSlides={true}
+        slidesPerView={5}
+        spaceBetween={20}
+        autoplay={
+          shouldLoop
+            ? {
+                delay: 2500,
+                disableOnInteraction: false,
+              }
+            : false
+        }
+        loop={shouldLoop}
+        pagination={{ clickable: true, el: ".custom-pagination" }}
+        navigation={{
+          nextEl: ".next-btn",
+          prevEl: ".prev-btn",
+        }}
+        breakpoints={{
+          0: { slidesPerView: 1, centeredSlides: false },
+          640: { slidesPerView: 3, centeredSlides: true },
+          1024: { slidesPerView: 4, centeredSlides: true },
+        }}
+        className="feedback-swiper"
+      >
+        {recentListings.map((listing) => (
+          <SwiperSlide key={listing._id}>
+            {({ isActive }) => (
+              <div
+                className={`card bg-base-100 shadow-lg h-full flex flex-col justify-between transition-all duration-300 ${
+                  isActive ? "scale-100 opacity-100" : "scale-90 opacity-50"
+                }`}
+              >
+                <ListingCard key={listing._id} listing={listing} />
               </div>
-
-              <div className="flex flex-1 flex-col gap-3 p-6">
-                <h3 className="text-lg font-semibold text-base-content line-clamp-2">
-                  {name || "Untitled Listing"}
-                </h3>
-                <p className="text-sm font-medium text-primary">
-                  {displayPrice}
-                </p>
-                <p className="text-sm text-base-content/70">
-                  {location || "Location not specified"}
-                </p>
-                <div className="mt-auto">
-                  <Link
-                    to={`/listing-details/${_id}`}
-                    className="btn btn-sm w-full btn-primary font-semibold transition-colors duration-300"
-                  >
-                    See Details
-                  </Link>
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+            )}
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </section>
   );
 };

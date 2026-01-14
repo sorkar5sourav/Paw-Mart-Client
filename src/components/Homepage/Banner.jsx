@@ -73,7 +73,7 @@ const Banner = () => {
             prevEl: ".swiper-button-prev",
           }}
         >
-          {slides.map(({ image, alt, tagline, description }) => (
+          {slides.map(({ image, alt, tagline }) => (
             <SwiperSlide key={tagline}>
               <div className="h-full w-full relative">
                 <img

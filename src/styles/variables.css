@@ -117,3 +117,23 @@ a:visited {
 [data-theme="dark"] a:visited {
   color: var(--color-secondary);
 }
+
+/* Ensure buttons/badges that use the primary color have readable (white) text */
+.btn.btn-primary,
+.btn-primary,
+.badge.badge-primary,
+.badge-primary {
+  color: var(--white-1) !important;
+}
+
+/* Also ensure links or other elements with btn styling keep white text when primary */
+.btn.btn-primary a,
+.btn-primary a {
+  color: var(--white-1) !important;
+}
+
+/* Keep ListingCard text color constant (black) even in dark mode */
+.listing-card,
+.listing-card * {
+  color: var(--black-1) !important;
+}

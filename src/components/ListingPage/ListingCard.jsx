@@ -12,7 +12,6 @@ const ListingCard = ({ listing }) => {
     price,
     createdAt,
     status,
-    rating,
   } = listing;
 
   const displayPrice =
@@ -23,11 +22,10 @@ const ListingCard = ({ listing }) => {
     ? new Date(createdAt).toLocaleDateString()
     : "—";
   const displayStatus = status || "Available";
-  const displayRating = rating ? Number(rating).toFixed(1) : null;
 
   return (
     <div
-      className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
+      className="card listing-card bg-base-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
       style={{ borderRadius: "var(--radius-md)", minHeight: 380 }}
     >
       {/* Image */}
@@ -45,15 +43,17 @@ const ListingCard = ({ listing }) => {
 
       {/* Card Body */}
       <div className="card-body">
-        <div className="flex items-start justify-between mb-2 gap-2">
-          <h2 className="card-title text-lg line-clamp-2 flex-1">{name}</h2>
-          <span className="badge badge-primary badge-sm ml-2 shrink-0">
-            {category}
-          </span>
+        <div className="flex flex-1">
+          <div className="flex items-start justify-between mb-2 gap-2">
+            <h2 className="card-title text-lg line-clamp-2 flex-1">{name}</h2>
+            <span className="badge badge-primary badge-sm ml-2 mt-1 shrink-0">
+              {category}
+            </span>
+          </div>
         </div>
 
         {/* Meta row */}
-        <div className="flex items-center justify-between text-sm text-base-content/70 mb-2 gap-2">
+        <div className="flex items-center justify-between text-s m text-gray-700 mb-2 gap-2">
           <div className="flex items-center gap-2 truncate">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,39 +78,16 @@ const ListingCard = ({ listing }) => {
             <span className="truncate">{location || "Unknown"}</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-muted">{displayDate}</span>
-            <span className="badge badge-ghost badge-sm">{displayStatus}</span>
-            {displayRating && (
-              <span className="text-sm">⭐ {displayRating}</span>
-            )}
+            <span className="text-xs text-muted hidden lg:flex">
+              {displayDate}
+            </span>
+            {displayStatus && <span className="">✅</span>}
           </div>
         </div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 mr-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
-        <span className="truncate">{location}</span>
-      </div>
-
-      {/* Price */}
-      <div className="mb-4">
-        <span className="text-2xl font-bold">{displayPrice}</span>
+        {/* Price */}
+        <div className="">
+          <span className="text-2xl justify-end font-bold">{displayPrice}</span>
+        </div>
       </div>
 
       {/* See Details Button */}
